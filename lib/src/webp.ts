@@ -5,7 +5,7 @@ import type { RgbaImage } from "./types";
 
 /**
  * Opt-in WEBP decoder. Importing `avatarsniff/webp` registers it, so
- * `detectDefaultAvatar`/`decodeImage` then handle WEBP in plain Node too. The
+ * `sniff`/`decodeImage` then handle WEBP in plain Node too. The
  * decoder's wasm (~138KB) is inlined into THIS bundle, so the core stays tiny
  * and consumers still install zero dependencies.
  */

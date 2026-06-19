@@ -1,13 +1,15 @@
 export { analyzeImage } from "./analyze";
-export { detectDefaultAvatar, detectDefaultAvatarFromUrl } from "./bytes";
 export { DEFAULT_MAX_BYTES, decodeImage, sniffFormat } from "./decode";
-export { detectFromImageData } from "./image-data";
 export { type Decoder, registerDecoder } from "./registry";
-export type { ImageDataLike } from "./image-data";
+export { sniff } from "./sniff";
+export type { ImageDataLike, SniffInput } from "./sniff";
+export { DETECTOR_NAMES } from "./types";
 export type {
   DecodeOptions,
   DefaultAvatarDetection,
   DetectOptions,
+  DetectorName,
+  DetectorToggles,
   ImageFormat,
   RgbaImage,
 } from "./types";

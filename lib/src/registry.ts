@@ -21,7 +21,7 @@ function registry(): Map<ImageFormat, Decoder> {
 /**
  * Register a decoder for a format. The opt-in `avatarsniff/webp` and
  * `avatarsniff/svg` entry points call this on import, so importing them makes
- * `decodeImage`/`detectDefaultAvatar` handle that format in plain Node too. You
+ * `decodeImage`/`sniff` handle that format in plain Node too. You
  * can also register your own decoder for any format.
  */
 export function registerDecoder(format: ImageFormat, decoder: Decoder): void {

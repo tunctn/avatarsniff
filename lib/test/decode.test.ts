@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, test, vi } from "vitest";
-import { detectDefaultAvatar, detectDefaultAvatarFromUrl } from "../src/bytes";
+import { sniff } from "../src/sniff";
 import { DEFAULT_MAX_BYTES, decodeImage, sniffFormat } from "../src/decode";
 import {
   defaultAvatarRgba,
@@ -12,7 +12,7 @@ import {
 type Rgb = [number, number, number];
 
 // ---------------------------------------------------------------------------
-// PNG encoder (filter 0, 8-bit RGBA) — pure, dependency-free, for real decode
+// PNG encoder (filter 0, 8-bit RGBA) - pure, dependency-free, for real decode
 // ---------------------------------------------------------------------------
 
 const CRC_TABLE = (() => {
@@ -124,7 +124,7 @@ async function encodePngTyped(
 }
 
 // ---------------------------------------------------------------------------
-// GIF encoder (LZW) — pure, dependency-free, for real decode
+// GIF encoder (LZW) - pure, dependency-free, for real decode
 // ---------------------------------------------------------------------------
 
 function lzwEncode(indices: Uint8Array, minCodeSize: number): Uint8Array {
@@ -315,7 +315,7 @@ describe("server-side pure-JS decode (no native canvas)", () => {
     const png = await encodePng(DEFAULT_PIXELS, 64, 64);
     const image = await decodeImage(png);
     expect(image?.width).toBe(64);
-    const result = await detectDefaultAvatar(png);
+    const result = await sniff(png);
     expect(result.isDefault).toBe(true);
   });
 
@@ -328,22 +328,23 @@ describe("server-side pure-JS decode (no native canvas)", () => {
     const image = await decodeImage(gif);
     expect(image?.width).toBe(64);
     expect(image?.height).toBe(64);
-    const result = await detectDefaultAvatar(gif);
+    const result = await sniff(gif);
     expect(result.isDefault).toBe(true);
   });
 
-  test("decodes a solid GIF as not-a-default (no glyph)", async () => {
+  test("decodes a solid saturated GIF as a solidColor default", async () => {
     const gif = encodeGif(indexFill(48, 48, false), 48, 48, [
       [22, 160, 160],
       [255, 255, 255],
     ]);
-    const result = await detectDefaultAvatar(gif);
-    expect(result.isDefault).toBe(false);
+    const result = await sniff(gif);
+    expect(result.isDefault).toBe(true);
+    expect(result.matched).toBe("solidColor");
   });
 
   test("does not flag a plain white PNG", async () => {
     const png = await encodePng(rgbaFill(64, 64, [255, 255, 255]), 64, 64);
-    expect((await detectDefaultAvatar(png)).isDefault).toBe(false);
+    expect((await sniff(png)).isDefault).toBe(false);
   });
 
   test("decodes a real JPEG (default-style) with the bundled pure-JS decoder", async () => {
@@ -354,12 +355,12 @@ describe("server-side pure-JS decode (no native canvas)", () => {
     expect(image?.width).toBe(64);
     expect(image?.channels).toBe(4);
     // colour bg + white glyph survives JPEG => still flagged
-    expect((await detectDefaultAvatar(jpg)).isDefault).toBe(true);
+    expect((await sniff(jpg)).isDefault).toBe(true);
   });
 
   test("decodes a real photo-style JPEG as not-a-default", async () => {
     const jpg = encodeJpeg(photoRgba(64, 64), 64, 64);
-    expect((await detectDefaultAvatar(jpg)).isDefault).toBe(false);
+    expect((await sniff(jpg)).isDefault).toBe(false);
   });
 
   test("fails open (not-a-default) for WEBP/SVG with no decoder registered", async () => {
@@ -370,8 +371,8 @@ describe("server-side pure-JS decode (no native canvas)", () => {
     // this file never imports avatarsniff/webp|svg, so nothing decodes them
     expect(await decodeImage(webp)).toBeNull();
     expect(await decodeImage(svg)).toBeNull();
-    expect((await detectDefaultAvatar(webp)).isDefault).toBe(false);
-    expect((await detectDefaultAvatar(svg)).reason).toContain(
+    expect((await sniff(webp)).isDefault).toBe(false);
+    expect((await sniff(svg)).reason).toContain(
       "could not decode"
     );
   });
@@ -388,7 +389,7 @@ describe("client-side native decode (createImageBitmap / canvas)", () => {
       mockNativeDecode(DEFAULT_PIXELS, 64, 64);
       const image = await decodeImage(bytes);
       expect(image?.width).toBe(64);
-      expect((await detectDefaultAvatar(bytes)).isDefault).toBe(true);
+      expect((await sniff(bytes)).isDefault).toBe(true);
     });
   }
 
@@ -423,7 +424,7 @@ describe("client-side native decode (createImageBitmap / canvas)", () => {
       }
     );
     const svg = new TextEncoder().encode('<svg width="64" height="64"></svg>');
-    const result = await detectDefaultAvatar(svg);
+    const result = await sniff(svg);
     expect(result.isDefault).toBe(true);
   });
 });
@@ -468,7 +469,7 @@ describe("PNG colour types", () => {
       [66, 133, 244],
       [255, 255, 255],
     ]);
-    expect((await detectDefaultAvatar(png)).isDefault).toBe(true);
+    expect((await sniff(png)).isDefault).toBe(true);
   });
 });
 
@@ -484,7 +485,7 @@ describe("native decode fallbacks", () => {
     vi.stubGlobal("document", {
       createElement: () => ({ width: 0, height: 0, getContext: () => ctx }),
     });
-    const result = await detectDefaultAvatar(
+    const result = await sniff(
       new Uint8Array([0xff, 0xd8, 0xff, 0xe0])
     );
     expect(result.isDefault).toBe(true);
@@ -508,7 +509,7 @@ describe("size cap (up to 10MB)", () => {
   test("rejects input larger than the cap before decoding", async () => {
     const tooBig = new Uint8Array(DEFAULT_MAX_BYTES + 1);
     expect(await decodeImage(tooBig)).toBeNull();
-    expect((await detectDefaultAvatar(tooBig)).isDefault).toBe(false);
+    expect((await sniff(tooBig)).isDefault).toBe(false);
   });
 
   test("honours a custom maxBytes", async () => {
@@ -540,16 +541,16 @@ describe("size cap (up to 10MB)", () => {
     const image = await decodeImage(png);
     expect(image?.width).toBe(size);
     // noisy => lots of colour => never a default
-    expect((await detectDefaultAvatar(png)).isDefault).toBe(false);
+    expect((await sniff(png)).isDefault).toBe(false);
   });
 });
 
-describe("detectDefaultAvatarFromUrl", () => {
+describe("sniff(url)", () => {
   test("returns null for a missing url or failed fetch", async () => {
-    expect(await detectDefaultAvatarFromUrl(undefined)).toBeNull();
-    expect(await detectDefaultAvatarFromUrl("")).toBeNull();
+    expect(await sniff(undefined)).toBeNull();
+    expect(await sniff("")).toBeNull();
     expect(
-      await detectDefaultAvatarFromUrl("http://127.0.0.1:0/x.png")
+      await sniff("http://127.0.0.1:0/x.png")
     ).toBeNull();
   });
 });

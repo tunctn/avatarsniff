@@ -6,15 +6,15 @@ import type { DecodeOptions, ImageFormat, RgbaImage } from "./types";
  *
  * Two layers, no npm or native dependencies:
  *
- *  1. **Native layer** — when the runtime provides `createImageBitmap` + a
+ *  1. **Native layer** - when the runtime provides `createImageBitmap` + a
  *     canvas (`OffscreenCanvas` or a DOM `<canvas>`), every format is decoded
  *     by the platform: browsers, web workers, Deno, Bun. SVG is rasterised via
  *     an `<img>` element when a DOM is present.
- *  2. **Pure-JS layer** — for plain Node (no canvas), PNG and GIF are decoded in
+ *  2. **Pure-JS layer** - for plain Node (no canvas), PNG and GIF are decoded in
  *     pure JS (PNG inflate uses the built-in `DecompressionStream`) and JPEG via
  *     the bundled `jpeg-js` (a devDependency inlined into `dist`, so consumers
  *     still install zero dependencies). WEBP and SVG aren't decoded here; they
- *     return `null`, which callers treat as "not a default, keep it" — the right
+ *     return `null`, which callers treat as "not a default, keep it" - the right
  *     outcome for a real photo/graphic.
  *
  * Inputs larger than `maxBytes` (default 10MB) are rejected before decoding.
@@ -278,7 +278,7 @@ function lzwDecode(
     if (prev) {
       dict.push([...prev, entry[0]]);
       // The decoder builds the table one entry behind the encoder, so it must
-      // grow the code size one entry early — the canonical GIF LZW off-by-one.
+      // grow the code size one entry early - the canonical GIF LZW off-by-one.
       if (dict.length === (1 << codeSize) - 1 && codeSize < 12) {
         codeSize++;
       }
@@ -403,7 +403,7 @@ function decodeGif(bytes: Uint8Array): RgbaImage | null {
 
 async function decodeJpeg(bytes: Uint8Array): Promise<RgbaImage | null> {
   try {
-    // jpeg-js is a devDependency bundled into dist — consumers install nothing.
+    // jpeg-js is a devDependency bundled into dist - consumers install nothing.
     const jpeg = (await import("jpeg-js")).default;
     const decoded = jpeg.decode(bytes, {
       useTArray: true,

@@ -1,5 +1,5 @@
 import { beforeAll, describe, expect, test } from "vitest";
-import { detectDefaultAvatar } from "../src/bytes";
+import { sniff } from "../src/sniff";
 // Importing the subpath registers the WEBP decoder with the core.
 import { decodeWebp } from "../src/webp";
 import { defaultAvatarRgba, encodeWebp, photoRgba } from "./image-helpers";
@@ -22,13 +22,13 @@ describe("avatarsniff/webp (real wasm decode, server-side)", () => {
     expect(image?.data.length).toBe(64 * 64 * 4);
   });
 
-  test("importing the subpath lets detectDefaultAvatar flag a default WEBP in Node", async () => {
-    const result = await detectDefaultAvatar(defaultWebp);
+  test("importing the subpath lets sniff flag a default WEBP in Node", async () => {
+    const result = await sniff(defaultWebp);
     expect(result.reason).not.toContain("could not decode");
     expect(result.isDefault).toBe(true);
   });
 
   test("a photo-style WEBP is not a default", async () => {
-    expect((await detectDefaultAvatar(photoWebp)).isDefault).toBe(false);
+    expect((await sniff(photoWebp)).isDefault).toBe(false);
   });
 });

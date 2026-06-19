@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { detectDefaultAvatar } from "../src/bytes";
+import { sniff } from "../src/sniff";
 // Importing the subpath registers the SVG rasteriser with the core.
 import { decodeSvg } from "../src/svg";
 import { defaultAvatarSvg } from "./image-helpers";
@@ -15,7 +15,7 @@ describe("avatarsniff/svg (real wasm rasterise, server-side)", () => {
   });
 
   test("detects a default-style SVG avatar (colour square + white block)", async () => {
-    const result = await detectDefaultAvatar(svg);
+    const result = await sniff(svg);
     expect(result.isDefault).toBe(true);
   });
 });

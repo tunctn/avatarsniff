@@ -5,8 +5,8 @@ import type { RgbaImage } from "./types";
 
 /**
  * Opt-in SVG rasteriser. Importing `avatarsniff/svg` registers it, so
- * `detectDefaultAvatar`/`decodeImage` then rasterise SVG in plain Node too. The
- * resvg wasm (~2.5MB) is inlined into THIS bundle only — the core stays tiny and
+ * `sniff`/`decodeImage` then rasterise SVG in plain Node too. The
+ * resvg wasm (~2.5MB) is inlined into THIS bundle only - the core stays tiny and
  * consumers still install zero dependencies.
  */
 
