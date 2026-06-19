@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "avatarsniff — sniff out default avatars",
+  title: "avatarsniff - sniff out default avatars",
   description:
     "Detect generic/default provider avatars (Google's initial-on-colour, Gravatar mystery-person, solid placeholders) straight from image pixels. Framework-agnostic, zero-dependency core.",
 };

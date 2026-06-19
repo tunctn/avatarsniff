@@ -1,6 +1,6 @@
 "use client";
 
-import { type DefaultAvatarDetection, detectFromImageData } from "avatarsniff";
+import { type DefaultAvatarDetection, sniff } from "avatarsniff";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
@@ -97,7 +97,7 @@ function Sample({ label, draw }: { label: string; draw: DrawFn }) {
       return;
     }
     draw(ctx);
-    setResult(detectFromImageData(ctx.getImageData(0, 0, SIZE, SIZE)));
+    sniff(ctx.getImageData(0, 0, SIZE, SIZE)).then(setResult);
   }, [draw]);
   return (
     <Card className="flex flex-col items-center gap-2 p-4 text-center transition-shadow hover:shadow-[0_4px_12px_rgba(0,0,0,0.1)]">
@@ -126,15 +126,21 @@ function Upload() {
     const objectUrl = URL.createObjectURL(file);
     const img = new Image();
     img.onload = () => {
+      // Draw at the image's natural size, 1:1 — no destination scaling, so no
+      // smoothing blur. Downscaling here (e.g. to 64px) would average fine
+      // detail into greys and make busy identicons read as a near-white photo;
+      // sniff downsamples internally instead. Matches passing image bytes.
+      const w = img.naturalWidth || SIZE;
+      const h = img.naturalHeight || SIZE;
       const canvas = document.createElement("canvas");
-      canvas.width = SIZE;
-      canvas.height = SIZE;
+      canvas.width = w;
+      canvas.height = h;
       const ctx = canvas.getContext("2d", { willReadFrequently: true });
       if (!ctx) {
         return;
       }
-      ctx.drawImage(img, 0, 0, SIZE, SIZE);
-      setResult(detectFromImageData(ctx.getImageData(0, 0, SIZE, SIZE)));
+      ctx.drawImage(img, 0, 0);
+      sniff(ctx.getImageData(0, 0, w, h)).then(setResult);
       setUrl(objectUrl);
     };
     img.src = objectUrl;

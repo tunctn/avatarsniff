@@ -8,7 +8,7 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* Sonner palette — studied DNA (source: emilkowal.ski, public reference).
+/* Sonner palette - studied DNA (source: emilkowal.ski, public reference).
  * Raw values; the shadcn semantic tokens in :root below map onto these. */
 :root {
   --gray-1: hsl(0, 0%, 99%);

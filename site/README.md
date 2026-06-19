@@ -2,7 +2,7 @@
 
 Landing page + live demo for [avatarsniff](https://github.com/tunctn/avatarsniff).
 Next.js (App Router), no UI framework beyond React. The demo runs the library's
-zero-dependency browser API (`detectFromImageData`) entirely client-side.
+zero-dependency browser API (`sniff`) entirely client-side.
 
 ## Develop
 

@@ -75,26 +75,31 @@ function Code({ children }: { children: React.ReactNode }) {
   );
 }
 
-const USAGE = `import { detectFromImageData } from "avatarsniff";
+const USAGE = `import { sniff } from "avatarsniff";
 
 const ctx = canvas.getContext("2d");
 ctx.drawImage(avatarImg, 0, 0, 64, 64);
 
-const { isDefault, reason } = detectFromImageData(
+const { isDefault, matched, reason } = await sniff(
   ctx.getImageData(0, 0, 64, 64)
 );
 
 if (isDefault) {
-  // generic provider default — swap in your own avatar
+  // generic provider default (matched: "initials" | "identicon" | ...)
+  // swap in your own avatar
 }`;
 
-const NODE_USAGE = `import { detectDefaultAvatar, detectDefaultAvatarFromUrl } from "avatarsniff";
+const NODE_USAGE = `import { sniff } from "avatarsniff";
 
-// batteries included — decodes PNG/JPEG/GIF/WEBP/SVG, up to 10MB, zero deps
-const result = await detectDefaultAvatar(bytes);
+// one entry point - pass bytes, a URL, or canvas pixels
+// decodes PNG/JPEG/GIF/WEBP/SVG, up to 10MB, zero deps
+const result = await sniff(bytes); // Uint8Array | ArrayBuffer
 
-const fromUrl = await detectDefaultAvatarFromUrl(user.photoUrl);
-// null if the URL is missing or the fetch fails`;
+const fromUrl = await sniff(user.photoUrl); // fetched for you
+// null if the URL is missing or the fetch fails
+
+// every detector family is on by default - opt out per call
+await sniff(bytes, { detect: { identicon: false } });`;
 
 const preClass =
   "overflow-x-auto rounded-md border border-border bg-[linear-gradient(to_top,var(--gray-2),var(--gray-1)_8px)] p-4 font-mono text-[13px] leading-[1.55] text-foreground";
@@ -186,9 +191,9 @@ export default async function Home() {
         <section className="flex flex-col gap-3" id="demo">
           <h2 className="text-[15px] font-semibold tracking-[-0.01em]">Try it</h2>
           <p className="text-[15px] leading-relaxed text-muted-foreground">
-            These run entirely in your browser through{" "}
-            <Code>detectFromImageData</Code>. Each sample is drawn on a canvas and
-            classified on the spot. Drop your own in below.
+            These run entirely in your browser through <Code>sniff</Code>. Each
+            sample is drawn on a canvas and classified on the spot. Drop your own
+            in below.
           </p>
           <Demo />
         </section>
