@@ -1,0 +1,31 @@
+name: Release
+
+# Publishes the avatarsniff lib to npm when a v* tag is pushed.
+# Needs an NPM_TOKEN repo secret (npm granular/automation token with publish rights).
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # npm provenance
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      # Same gates as CI, against the tagged commit.
+      - run: pnpm --filter avatarsniff typecheck
+      - run: pnpm --filter avatarsniff coverage
+      - run: pnpm --filter avatarsniff build
+      - run: pnpm --filter avatarsniff publish --no-git-checks --access public --provenance
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
