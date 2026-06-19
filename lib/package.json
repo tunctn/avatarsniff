@@ -1,6 +1,6 @@
 {
   "name": "avatarsniff",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Sniff out generic/default provider avatars (Google's initial-on-colour, Gravatar mystery-person, solid placeholders) straight from image pixels. Framework-agnostic, zero dependencies.",
   "type": "module",
   "license": "MIT",
