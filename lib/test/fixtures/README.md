@@ -1,24 +1,31 @@
 # Test fixtures
 
-Drop real images here and the test suite covers them automatically
-(`test/fixtures.test.ts`). Any format works: `.png .jpg .jpeg .gif .webp .svg`.
-
-| Folder | Committed? | Put here | Expected verdict |
-| ------ | ---------- | -------- | ---------------- |
-| `default/` | ✅ yes (public) | generic **default** avatars (Google initial-on-colour, Gravatar identicon/mystery-person, solid placeholders) | `isDefault: true` |
-| `real/` | ✅ yes (public) | **real** photos, logos, custom avatars | `isDefault: false` |
-| `local-default/` | 🚫 git-ignored | sensitive default avatars | `isDefault: true` |
-| `local-real/` | 🚫 git-ignored | sensitive real photos (faces, PII) | `isDefault: false` |
-
-**Only commit images you're OK publishing.** Anything sensitive — real people's
-faces, anything you don't have rights to — goes in a `local-*` folder; those are
-git-ignored and run only on your machine (and skip in CI).
-
-After adding images:
+Real images only - the suite tests against actual default avatars, never
+synthetic ones. Refresh the committed set with:
 
 ```sh
-pnpm test
+node test/fixtures/fetch.mjs
 ```
 
-Each image becomes its own test asserting the detector classifies it correctly,
-so this doubles as a labelled accuracy check as the corpus grows.
+`fetch.mjs` pulls from public avatar-generation services (UI Avatars, DiceBear,
+placehold.co, Gravatar, GitHub identicons) and real photos (Lorem Picsum). Every
+source is generated/served for exactly this purpose or openly licensed, so the
+output is safe to commit. Any format works: `.png .jpg .jpeg .gif .webp .svg`.
+
+| Folder | Committed? | Contents | Expected |
+| ------ | ---------- | -------- | -------- |
+| `initials/` | ✅ yes | white initial on a flat colour | `isDefault: true`, `matched: "initials"` |
+| `solidColor/` | ✅ yes | flat solid-colour blocks | `isDefault: true`, `matched: "solidColor"` |
+| `personIcon/` | ✅ yes | grey person silhouettes | `isDefault: true`, `matched: "personIcon"` |
+| `identicon/` | ✅ yes | symmetric identicon patterns | `isDefault: true`, `matched: "identicon"` |
+| `real/` | ✅ yes | real photos | `isDefault: false` |
+| `local-default/` | 🚫 git-ignored | any default avatar (sensitive) | `isDefault: true` |
+| `local-real/` | 🚫 git-ignored | real photos / faces / PII | `isDefault: false` |
+
+Per-family folders assert both the verdict and which detector matched. The
+`local-*` folders are git-ignored - put faces, PII, or anything you can't
+publish there; they run on your machine and skip in CI. Empty folders skip, so
+clones stay green on whatever subset is present.
+
+Each image becomes its own test, so this doubles as a labelled accuracy check as
+the corpus grows.
