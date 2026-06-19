@@ -7,7 +7,9 @@ description: Cut a release of the avatarsniff npm package - run the preflight ga
 
 Publishes `lib/` (the `avatarsniff` package) to npm. The site is never part of a release.
 
-**Releases are always CI-driven.** You bump the version, tag, and push; the pushed `v*` tag triggers `.github/workflows/release.yml`, which runs the gates against the tagged commit and publishes using the `NPM_TOKEN` secret (reproducible, gets npm provenance). **Do not publish from this machine** - there is no local-publish lane.
+**Releases are always CI-driven.** You bump the version, tag, and push; the pushed `v*` tag triggers `.github/workflows/release.yml`, which runs the gates against the tagged commit and publishes via **OIDC trusted publishing** (tokenless, gets npm provenance automatically). **Do not publish from this machine** - there is no local-publish lane.
+
+> History: npm killed classic automation tokens (Dec 2025) and granular write tokens don't bypass 2FA-for-writes, so there is no token that publishes from CI. v0.1.1 (the first publish) was bootstrapped with one manual `npm publish`; everything after is OIDC.
 
 ## Things that bite here
 
@@ -29,7 +31,7 @@ Publishes `lib/` (the `avatarsniff` package) to npm. The site is never part of a
 
 ## What only the human can do
 
-Surface these when relevant - they need npm account and repo access you don't have:
+Surface these when relevant - they need npm account access you don't have:
 
-- Create an npm **granular access token** with publish rights for `avatarsniff` (or an Automation token), then add it as the `NPM_TOKEN` repo secret (`gh secret set NPM_TOKEN` if their gh is authed for `tunctn`, else the GitHub UI). Without this secret the workflow's publish step fails.
-- Confirm the npm package name and first-publish access (`avatarsniff` is unscoped, so public by default).
+- One-time: configure the **trusted publisher** at npmjs.com -> `avatarsniff` -> Settings -> Trusted Publisher -> GitHub Actions, with org/user `tunctn`, repo `avatarsniff`, workflow filename `release.yml` (must match exactly or publish 404s). Once set, releases need no secret.
+- If a publish 404s with an OIDC token-exchange error, the trusted publisher isn't configured (or the workflow filename/repo doesn't match).

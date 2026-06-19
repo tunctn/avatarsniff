@@ -1,7 +1,9 @@
 name: Release
 
 # Publishes the avatarsniff lib to npm when a v* tag is pushed.
-# Needs an NPM_TOKEN repo secret (npm granular/automation token with publish rights).
+# Tokenless via OIDC trusted publishing - configure the trusted publisher at
+# npmjs.com -> avatarsniff -> Settings -> Trusted Publisher (GitHub Actions:
+# tunctn / avatarsniff / release.yml). No NPM_TOKEN secret needed.
 on:
   push:
     tags: ["v*"]
@@ -10,11 +12,9 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
-    # Bootstrap publish uses the NPM_TOKEN directly. Once the package exists,
-    # configure an npm trusted publisher and switch back to OIDC + provenance
-    # (restore `id-token: write` and `--provenance`, drop NODE_AUTH_TOKEN).
     permissions:
       contents: read
+      id-token: write # OIDC trusted publishing + provenance
     steps:
       - uses: actions/checkout@v7
       - uses: pnpm/action-setup@v6
@@ -29,6 +29,4 @@ jobs:
       - run: pnpm --filter avatarsniff coverage
       - run: pnpm --filter avatarsniff build
       - run: pnpm --filter avatarsniff attw
-      - run: pnpm --filter avatarsniff publish --no-git-checks --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - run: pnpm --filter avatarsniff publish --no-git-checks --access public --provenance
