@@ -10,13 +10,7 @@ branch="$(git rev-parse --abbrev-ref HEAD)"
 [ "$branch" = "main" ] || echo "! on '$branch', not 'main'"
 
 if [ -n "$(git status --porcelain)" ]; then
-  echo "! working tree is dirty — commit or stash before releasing"
-fi
-
-if npm whoami >/dev/null 2>&1; then
-  echo "▸ npm: authed as $(npm whoami)"
-else
-  echo "! npm: not logged in — needed for a local publish (run: npm login)"
+  echo "! working tree is dirty - commit or stash before releasing"
 fi
 
 echo "▸ typecheck"
@@ -34,4 +28,4 @@ echo "▸ type resolution (are the types wrong?)"
 echo "▸ package contents (dry run):"
 npm pack --dry-run
 
-echo "✓ preflight passed — review the file list above, then bump + publish"
+echo "✓ preflight passed - review the file list above, then bump + publish"
