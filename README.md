@@ -5,6 +5,8 @@ solid-colour placeholders, the Gravatar mystery-person silhouette, GitHub/Gravat
 identicons — straight from image pixels, so you can replace them with something
 better.
 
+**🔎 Try it live: [avatarsniff.tunc.co](https://avatarsniff.tunc.co)**
+
 ## Install
 
 ```sh
@@ -29,7 +31,7 @@ if (result?.isDefault) {
 
 - [`lib/`](./lib) — the [`avatarsniff`](https://www.npmjs.com/package/avatarsniff)
   package. Framework- and runtime-agnostic, zero install dependencies.
-- [`site/`](./site) — a Next.js demo of the detector (not published).
+- [`site/`](./site) — the [live demo](https://avatarsniff.tunc.co), a Next.js app (not published).
 
 ## Develop
 
