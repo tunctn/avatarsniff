@@ -1,0 +1,17 @@
+{
+  "name": "avatarsniff-monorepo",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@11.8.0",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "pnpm --filter avatarsniff build",
+    "test": "pnpm --filter avatarsniff test",
+    "typecheck": "pnpm --filter avatarsniff typecheck",
+    "dev:site": "pnpm --filter avatarsniff-site dev",
+    "build:site": "pnpm --filter avatarsniff build && pnpm --filter avatarsniff-site build"
+  }
+}

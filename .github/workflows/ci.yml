@@ -1,0 +1,24 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      # Lib is the published package; typecheck, test (with coverage gate) and build it.
+      - run: pnpm --filter avatarsniff typecheck
+      - run: pnpm --filter avatarsniff coverage
+      - run: pnpm --filter avatarsniff build
+      # Make sure the demo site still builds against the freshly built lib.
+      - run: pnpm --filter avatarsniff-site build

@@ -1,0 +1,71 @@
+{
+  "name": "avatarsniff",
+  "version": "0.1.0",
+  "description": "Sniff out generic/default provider avatars (Google's initial-on-colour, Gravatar mystery-person, solid placeholders) straight from image pixels. Framework-agnostic, zero dependencies.",
+  "type": "module",
+  "license": "MIT",
+  "author": "Tunc <t@tunc.co>",
+  "homepage": "https://github.com/tunctn/avatarsniff#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tunctn/avatarsniff.git"
+  },
+  "bugs": {
+    "url": "https://github.com/tunctn/avatarsniff/issues"
+  },
+  "keywords": [
+    "avatar",
+    "default-avatar",
+    "placeholder",
+    "google",
+    "gravatar",
+    "image",
+    "detection",
+    "profile-picture"
+  ],
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./webp": {
+      "types": "./dist/webp.d.ts",
+      "import": "./dist/webp.js",
+      "require": "./dist/webp.cjs"
+    },
+    "./svg": {
+      "types": "./dist/svg.d.ts",
+      "import": "./dist/svg.js",
+      "require": "./dist/svg.cjs"
+    }
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "coverage": "vitest run --coverage",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "pnpm build"
+  },
+  "devDependencies": {
+    "@jsquash/webp": "^1.5.0",
+    "@resvg/resvg-wasm": "^2.6.2",
+    "@vitest/coverage-v8": "^2.1.8",
+    "jpeg-js": "^0.4.4",
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}

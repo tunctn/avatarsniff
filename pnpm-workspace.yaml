@@ -1,0 +1,10 @@
+packages:
+  - lib
+  - site
+
+# Allow these deps to run install scripts (each fetches/verifies a prebuilt
+# binary). esbuild powers tsup/vitest in the lib; sharp is Next's optional image
+# optimiser in the site.
+allowBuilds:
+  esbuild: true
+  sharp: true
