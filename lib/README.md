@@ -131,4 +131,4 @@ Every threshold is configurable via the optional `DetectOptions` argument.
 
 ## License
 
-MIT © Tunc
+MIT © Tunç Türkmen

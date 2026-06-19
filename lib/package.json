@@ -4,7 +4,7 @@
   "description": "Sniff out generic/default provider avatars (Google's initial-on-colour, Gravatar mystery-person, solid placeholders) straight from image pixels. Framework-agnostic, zero dependencies.",
   "type": "module",
   "license": "MIT",
-  "author": "Tunc <t@tunc.co>",
+  "author": "Tunç Türkmen <t@tunc.co>",
   "homepage": "https://github.com/tunctn/avatarsniff#readme",
   "repository": {
     "type": "git",
