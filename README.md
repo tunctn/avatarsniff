@@ -1,11 +1,12 @@
 # avatarsniff
 
-Detect generic/default provider avatars — Google's initial-on-colour, flat
-solid-colour placeholders, the Gravatar mystery-person silhouette, GitHub/Gravatar
-identicons — straight from image pixels, so you can replace them with something
-better.
+Detect the generic, auto-generated avatars providers hand out when someone never
+set a profile picture: Google's letter-on-a-colour, flat solid-colour blocks, the
+Gravatar mystery-person silhouette, GitHub and Gravatar identicons. It reads the
+image pixels directly, so you can catch a default and replace it with something
+of your own.
 
-**🔎 Try it live: [avatarsniff.tunc.co](https://avatarsniff.tunc.co)**
+Try it: [avatarsniff.tunc.co](https://avatarsniff.tunc.co)
 
 ## Install
 
@@ -20,18 +21,18 @@ import { sniff } from "avatarsniff";
 
 const result = await sniff(bytesOrUrl);
 if (result?.isDefault) {
-  // generic provider default (result.matched says which family) — swap it out
+  // a generic provider default; result.matched says which kind
 }
 ```
 
-**👉 Full API, the decoding matrix, and the WEBP/SVG opt-in subpaths are in
-[`lib/README.md`](./lib/README.md).**
+The full API, the decoding matrix, and the opt-in WEBP/SVG subpaths are in
+[`lib/README.md`](./lib/README.md).
 
-## Repository
+## What's in here
 
-- [`lib/`](./lib) — the [`avatarsniff`](https://www.npmjs.com/package/avatarsniff)
-  package. Framework- and runtime-agnostic, zero install dependencies.
-- [`site/`](./site) — the [live demo](https://avatarsniff.tunc.co), a Next.js app (not published).
+- [`lib/`](./lib) is the [`avatarsniff`](https://www.npmjs.com/package/avatarsniff)
+  package: framework- and runtime-agnostic, zero install dependencies.
+- [`site/`](./site) is the [live demo](https://avatarsniff.tunc.co), a small Next.js app.
 
 ## Develop
 
@@ -46,3 +47,4 @@ pnpm --filter avatarsniff build
 ## License
 
 [MIT](./LICENSE) © Tunç Türkmen
+```
