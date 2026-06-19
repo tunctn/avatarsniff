@@ -26,6 +26,7 @@ jobs:
       - run: pnpm --filter avatarsniff typecheck
       - run: pnpm --filter avatarsniff coverage
       - run: pnpm --filter avatarsniff build
+      - run: pnpm --filter avatarsniff attw
       - run: pnpm --filter avatarsniff publish --no-git-checks --access public --provenance
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

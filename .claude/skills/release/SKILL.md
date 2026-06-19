@@ -22,7 +22,7 @@ Publishes `lib/` (the `avatarsniff` package) to npm. The site is never part of a
 
 ## Steps
 
-1. **Preflight.** Run `bash .claude/skills/release/scripts/preflight.sh`. It checks the tree is clean and on `main`, runs typecheck + coverage + build from `lib/`, and prints `npm pack --dry-run` so you can confirm only `dist/**` (plus README, LICENSE, package.json) ships. For a local publish, also confirm `npm whoami` succeeds — if not, ask the user to run `! npm login`.
+1. **Preflight.** Run `bash .claude/skills/release/scripts/preflight.sh`. It checks the tree is clean and on `main`, runs typecheck + coverage + build from `lib/`, runs `attw --pack` (catches dual ESM/CJS type-resolution bugs), and prints `npm pack --dry-run` so you can confirm only `dist/**` (plus README, LICENSE, package.json) ships. For a local publish, also confirm `npm whoami` succeeds — if not, ask the user to run `! npm login`.
 
 2. **Choose the bump.** Ask patch / minor / major (or an explicit version). This is the first publish if `npm view avatarsniff version` 404s — start at the version already in `lib/package.json` (0.1.0) unless the user says otherwise.
 

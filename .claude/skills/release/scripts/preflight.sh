@@ -28,6 +28,9 @@ echo "▸ tests + coverage"
 echo "▸ build dist"
 ./node_modules/.bin/tsup
 
+echo "▸ type resolution (are the types wrong?)"
+./node_modules/.bin/attw --pack .
+
 echo "▸ package contents (dry run):"
 npm pack --dry-run
 
