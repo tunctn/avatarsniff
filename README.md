@@ -5,15 +5,6 @@ solid-colour placeholders, the Gravatar mystery-person silhouette, GitHub/Gravat
 identicons — straight from image pixels, so you can replace them with something
 better.
 
-This repository is a [pnpm](https://pnpm.io) workspace with two packages:
-
-| Package | Path | Published | What it is |
-| --- | --- | --- | --- |
-| [`avatarsniff`](./lib) | `lib/` | [✅ npm](https://www.npmjs.com/package/avatarsniff) | The library. Framework- and runtime-agnostic, zero install dependencies. |
-| `avatarsniff-site` | `site/` | private | Next.js 15 / React 19 demo, deployed to Coolify. |
-
-**👉 If you just want to use the library, read [`lib/README.md`](./lib/README.md).**
-
 ## Install
 
 ```sh
@@ -31,32 +22,24 @@ if (result?.isDefault) {
 }
 ```
 
-Full API, the decoding matrix, and the WEBP/SVG opt-in subpaths are documented in
-[`lib/README.md`](./lib/README.md).
+**👉 Full API, the decoding matrix, and the WEBP/SVG opt-in subpaths are in
+[`lib/README.md`](./lib/README.md).**
+
+## Repository
+
+- [`lib/`](./lib) — the [`avatarsniff`](https://www.npmjs.com/package/avatarsniff)
+  package. Framework- and runtime-agnostic, zero install dependencies.
+- [`site/`](./site) — a Next.js demo of the detector (not published).
 
 ## Develop
 
 ```sh
-pnpm install            # from the repo root — installs both packages
+pnpm install
 
-# library (lib/)
 pnpm --filter avatarsniff typecheck
 pnpm --filter avatarsniff test
-pnpm --filter avatarsniff build      # emits lib/dist (esm + cjs + dts)
-
-# site (site/) — needs lib built first
-pnpm --filter avatarsniff-site dev
+pnpm --filter avatarsniff build
 ```
-
-The library bundles every decoder into `dist`, so the published package has **zero
-runtime dependencies**. The site depends on the lib via `workspace:*` and is never
-published to npm.
-
-## Release
-
-The library publishes to npm from CI when a `v*` tag is pushed
-(`.github/workflows/release.yml`). The site deploys separately from the root
-`Dockerfile`.
 
 ## License
 
