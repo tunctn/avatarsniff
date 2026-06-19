@@ -1,6 +1,6 @@
 {
   "name": "avatarsniff",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Sniff out generic/default provider avatars (Google's initial-on-colour, Gravatar mystery-person, solid placeholders) straight from image pixels. Framework-agnostic, zero dependencies.",
   "type": "module",
   "license": "MIT",
@@ -26,16 +26,34 @@
   "sideEffects": false,
   "exports": {
     ".": {
-      "import": { "types": "./dist/index.d.ts", "default": "./dist/index.js" },
-      "require": { "types": "./dist/index.d.cts", "default": "./dist/index.cjs" }
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
     },
     "./webp": {
-      "import": { "types": "./dist/webp.d.ts", "default": "./dist/webp.js" },
-      "require": { "types": "./dist/webp.d.cts", "default": "./dist/webp.cjs" }
+      "import": {
+        "types": "./dist/webp.d.ts",
+        "default": "./dist/webp.js"
+      },
+      "require": {
+        "types": "./dist/webp.d.cts",
+        "default": "./dist/webp.cjs"
+      }
     },
     "./svg": {
-      "import": { "types": "./dist/svg.d.ts", "default": "./dist/svg.js" },
-      "require": { "types": "./dist/svg.d.cts", "default": "./dist/svg.cjs" }
+      "import": {
+        "types": "./dist/svg.d.ts",
+        "default": "./dist/svg.js"
+      },
+      "require": {
+        "types": "./dist/svg.d.cts",
+        "default": "./dist/svg.cjs"
+      }
     }
   },
   "main": "./dist/index.cjs",
@@ -43,8 +61,12 @@
   "types": "./dist/index.d.ts",
   "typesVersions": {
     "*": {
-      "webp": ["./dist/webp.d.ts"],
-      "svg": ["./dist/svg.d.ts"]
+      "webp": [
+        "./dist/webp.d.ts"
+      ],
+      "svg": [
+        "./dist/svg.d.ts"
+      ]
     }
   },
   "files": [
