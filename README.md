@@ -47,4 +47,3 @@ pnpm --filter avatarsniff build
 ## License
 
 [MIT](./LICENSE) © Tunç Türkmen
-```
