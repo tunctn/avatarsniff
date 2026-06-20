@@ -280,8 +280,9 @@ export function GuardDogHero() {
       aria-hidden="true"
       className="relative select-none mx-auto h-28 w-full max-w-[400px] overflow-hidden [--guard-inspect:-40px] [mask-image:linear-gradient(90deg,transparent,#000_14%,#000_86%,transparent)]"
     >
-      {/* Incoming avatar — a pixelated 16×16 circle, no shadow, no border. Only
-          rendered once prepared, so the raw square never paints on first load. */}
+      {/* Incoming avatar — a pixelated 16×16 circle in a square pixel frame (the
+          dog's inspection tile). Only rendered once prepared, so the raw square
+          never paints on first load. */}
       {ready && avatarUrl && (
         <div
           className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"

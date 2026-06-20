@@ -1,6 +1,8 @@
-/* Hallmark · macrostructure: Centered Document · tone: utilitarian-minimal · anchor hue: neutral
- * theme: studied-DNA (source: url) · DNA-source: Sonner (emilkowal.ski, public reference)
- * shadcn semantic tokens remapped onto the Sonner palette in :root below · studied: yes
+/* Hallmark · pre-emit critique: P5 H4 E5 S4 R4 V5
+ * macrostructure: Centered Document · genre: playful · tone: arcade-pixel · anchor hue: warm-orange
+ * theme: custom "pixel-arcade" (paper #f5f2e8 · ink #16150f · accent #e8552d · Dogica + Inter + Geist Mono)
+ * language: square corners (radius 0) · 2px ink borders · hard offset shadows (no blur) · 8px pixel grid · flat fills
+ * shadcn semantic tokens remapped onto the pixel palette in :root below
  */
 @import "tailwindcss";
 @import "tw-animate-css";
@@ -30,6 +32,20 @@
   --color-on-accent: var(--gray-1);
   --color-focus: #0070f3;
 
+  /* ── Pixel-arcade palette ─────────────────────────────────────────────
+   * Warm CRT/paper whites, near-black warm ink, one arcade-orange accent.
+   * Borders are ink; surfaces sit on hard offset shadows with no blur. */
+  --px-ink: #16150f; /* near-black, warm */
+  --px-paper: #f5f2e8; /* warm off-white paper */
+  --px-surface: #fffdf7; /* raised card / button face */
+  --px-surface-2: #ece7d7; /* sunken panel (code, tabs) */
+  --px-line: #1f1d14; /* default hard border */
+  --px-accent: #e8552d; /* arcade orange */
+  --px-accent-ink: var(--px-ink); /* black-on-orange — arcade look + AA contrast */
+  --px-grid: rgba(22, 21, 15, 0.02); /* pixel graph-paper grid */
+  --px-shadow: 3px 3px 0 0 var(--px-ink);
+  --px-shadow-sm: 2px 2px 0 0 var(--px-ink);
+
   --chip-google: #4285f4;
   --chip-green: #1f9d55;
   --chip-violet: #7c5cff;
@@ -48,21 +64,16 @@
   --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, "SF Mono",
     Menlo, Consolas, monospace;
 
-  --shadow-raise: 0 0 0 1px rgba(0, 0, 0, 0.06), 0 1px 0 0 rgba(0, 0, 0, 0.08),
-    0 2px 2px 0 rgba(0, 0, 0, 0.04), 0 3px 3px 0 rgba(0, 0, 0, 0.02),
-    0 4px 4px 0 rgba(0, 0, 0, 0.01);
-  --gradient-raise: linear-gradient(156deg, #fff, #f0f0f0);
-  --gradient-sheen: linear-gradient(
-    0deg,
-    #e8e8e8 0,
-    hsla(0, 0%, 91%, 0.75) 35%,
-    hsla(0, 0%, 91%, 0.35) 60%,
-    hsla(0, 0%, 91%, 0) 100%
-  );
+  /* Pixel: flat fill, hard offset shadow, no gloss sweep. The shared `raise`
+   * button variant reads these, so it becomes a pixel panel automatically. */
+  --shadow-raise: var(--px-shadow);
+  --gradient-raise: var(--px-surface);
+  --gradient-sheen: transparent;
 }
 
 @theme inline {
-  --font-heading: var(--font-sans);
+  --font-heading: var(--font-dogica), var(--font-mono);
+  --font-pixel: var(--font-dogica), var(--font-mono);
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);
   --color-sidebar-ring: var(--sidebar-ring);
@@ -107,30 +118,30 @@
 
 /* Sonner DNA mapped onto shadcn's semantic tokens. */
 :root {
-  --background: var(--color-paper);
-  --foreground: var(--color-ink);
-  --card: var(--color-paper);
-  --card-foreground: var(--color-ink);
-  --popover: var(--color-paper);
-  --popover-foreground: var(--color-ink);
-  --primary: var(--color-accent);
-  --primary-foreground: var(--color-on-accent);
-  --secondary: var(--gray-2);
-  --secondary-foreground: var(--color-ink);
-  --muted: var(--gray-2);
+  --background: var(--px-paper);
+  --foreground: var(--px-ink);
+  --card: var(--px-surface);
+  --card-foreground: var(--px-ink);
+  --popover: var(--px-surface);
+  --popover-foreground: var(--px-ink);
+  --primary: var(--px-accent);
+  --primary-foreground: var(--px-accent-ink);
+  --secondary: var(--px-surface-2);
+  --secondary-foreground: var(--px-ink);
+  --muted: var(--px-surface-2);
   --muted-foreground: var(--color-muted);
-  --accent: var(--gray-2);
-  --accent-foreground: var(--color-ink);
+  --accent: var(--px-surface-2);
+  --accent-foreground: var(--px-ink);
   --destructive: var(--color-default-text);
-  --border: var(--color-border);
-  --input: var(--color-border);
-  --ring: var(--color-focus);
+  --border: var(--px-line);
+  --input: var(--px-line);
+  --ring: var(--px-accent);
   --chart-1: var(--chip-google);
   --chart-2: var(--chip-green);
   --chart-3: var(--chip-violet);
   --chart-4: var(--chip-teal);
   --chart-5: var(--chip-logo);
-  --radius: 6px;
+  --radius: 0px;
   --sidebar: var(--color-paper-2);
   --sidebar-foreground: var(--color-ink);
   --sidebar-primary: var(--color-accent);
@@ -187,9 +198,76 @@
     @apply bg-background text-foreground font-sans antialiased;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+    /* 8px pixel graph-paper grid under everything */
+    background-image:
+      linear-gradient(var(--px-grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--px-grid) 1px, transparent 1px);
+    background-size: 16px 16px;
   }
   ::selection {
-    background: var(--gray-4);
+    background: var(--px-accent);
+    color: var(--px-accent-ink);
+  }
+}
+
+/* ── Pixel helpers ──────────────────────────────────────────────────────── */
+@layer components {
+  /* A raised pixel panel: square, 2px ink border, hard offset shadow. */
+  .px-panel {
+    border: 2px solid var(--px-ink);
+    background: var(--px-surface);
+    box-shadow: var(--px-shadow);
+  }
+  /* Press: walk the element into its own shadow on hover, flush on active. */
+  .px-press {
+    transition:
+      transform 90ms steps(2, end),
+      box-shadow 90ms steps(2, end);
+  }
+  .px-press:hover {
+    transform: translate(1px, 1px);
+    box-shadow: var(--px-shadow-sm);
+  }
+  .px-press:active {
+    transform: translate(3px, 3px);
+    box-shadow: 0 0 0 0 var(--px-ink);
+  }
+  /* Pixel heading: Dogica, leading accent block drawn with ::before. */
+  .px-h2 {
+    font-family: var(--font-pixel);
+    color: var(--px-ink);
+    line-height: 1.1;
+    display: flex;
+    align-items: center;
+    gap: 0.6em;
+  }
+  .px-h2::before {
+    content: "";
+    width: 0.5em;
+    height: 0.5em;
+    flex: none;
+    background: var(--px-accent);
+  }
+  /* Blinking terminal caret. */
+  .px-caret {
+    display: inline-block;
+    width: 0.32em;
+    height: 1em;
+    margin-left: 0.12em;
+    transform: translateY(-0.1em);
+    background: var(--px-accent);
+    animation: px-blink 1s steps(1, end) infinite;
+  }
+}
+
+@keyframes px-blink {
+  0%,
+  50% {
+    opacity: 1;
+  }
+  50.01%,
+  100% {
+    opacity: 0;
   }
 }
 
@@ -278,4 +356,47 @@
   70% {
     transform: translateX(2px);
   }
+}
+
+/* ── Shiki code blocks ───────────────────────────────────────────────────
+   Build-time syntax highlighting (lib/highlight.ts). Shiki emits one tree
+   with both themes as CSS variables (defaultColor: false); we pick light or
+   dark here so there's no flash and no client-side highlighter. */
+.shiki-block .shiki {
+  background: transparent !important;
+}
+.shiki-block .shiki,
+.shiki-block .shiki span {
+  color: var(--shiki-light);
+}
+.dark .shiki-block .shiki,
+.dark .shiki-block .shiki span {
+  color: var(--shiki-dark);
+}
+/* Each line is a full-width row so line numbers and the highlight band reach
+   edge to edge even when the code scrolls horizontally. */
+.shiki-block .shiki code {
+  display: grid;
+  counter-reset: ln;
+}
+.shiki-block .shiki .line {
+  padding-inline: 1rem;
+  min-height: 1.55em;
+}
+.shiki-block[data-line-numbers] .shiki .line {
+  counter-increment: ln;
+}
+.shiki-block[data-line-numbers] .shiki .line::before {
+  content: counter(ln);
+  display: inline-block;
+  width: 1.25rem;
+  margin-right: 1.25rem;
+  text-align: right;
+  color: var(--muted-foreground);
+  opacity: 0.5;
+}
+/* Highlighted region (highlightLines prop → data-highlighted-line). */
+.shiki-block .shiki .line[data-highlighted-line] {
+  background: var(--px-surface);
+  box-shadow: inset 2px 0 0 var(--px-accent, var(--px-ink));
 }

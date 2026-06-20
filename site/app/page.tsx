@@ -1,4 +1,5 @@
 import { buttonVariants } from "@/components/ui/button";
+import { CodeBlock } from "@/components/ui/code-block";
 import { cn } from "@/lib/utils";
 import { Demo } from "./demo";
 import { GuardDogHero } from "./guard-dog";
@@ -29,11 +30,16 @@ const formatStars = (n: number) =>
 
 function Code({ children }: { children: React.ReactNode }) {
   return (
-    <code className="rounded-[5px] border border-border bg-[var(--color-paper-2)] px-1.5 py-px font-mono text-[0.92em] text-foreground">
+    <code className="border border-[var(--px-ink)] bg-[var(--px-surface-2)] px-1.5 py-px font-mono text-[0.92em] text-foreground">
       {children}
     </code>
   );
 }
+
+// Shared pixel button: square, 2px ink border, hard offset shadow that you
+// walk into on hover/press. Dogica face for the arcade-label feel.
+const pxBtn =
+  "rounded-none border-2 border-[var(--px-ink)] font-[family-name:var(--font-dogica)] shadow-[3px_3px_0_0_var(--px-ink)] transition-[transform,box-shadow] duration-75 hover:translate-x-px hover:translate-y-px hover:shadow-[2px_2px_0_0_var(--px-ink)] active:translate-x-[3px] active:translate-y-[3px] active:shadow-none";
 
 const USAGE = `import { sniff } from "avatarsniff";
 
@@ -61,9 +67,6 @@ const fromUrl = await sniff(user.photoUrl); // fetched for you
 // every detector family is on by default - opt out per call
 await sniff(bytes, { detect: { identicon: false } });`;
 
-const preClass =
-  "overflow-x-auto rounded-md border border-border bg-[linear-gradient(to_top,var(--gray-2),var(--gray-1)_8px)] p-4 font-mono text-[13px] leading-[1.55] text-foreground";
-
 export default async function Home() {
   const stars = await getStarCount();
 
@@ -72,8 +75,9 @@ export default async function Home() {
       <section className="flex flex-col items-center pt-[clamp(72px,14vh,128px)]">
         <GuardDogHero />
 
-        <h1 className="relative z-10 -mt-2 mb-3 font-[family-name:var(--font-dogica)] text-[clamp(30px,7vw,42px)] font-bold leading-[1.1] tracking-normal [overflow-wrap:anywhere]">
+        <h1 className="relative z-10 -mt-2 mb-3 inline-flex items-end font-[family-name:var(--font-dogica)] text-[clamp(30px,7vw,42px)] font-bold leading-[1.1] tracking-normal [overflow-wrap:anywhere]">
           avatarsniff
+          <span aria-hidden="true" className="px-caret" />
         </h1>
         <p className="mb-4 max-w-[34ch] text-center text-[17px] text-muted-foreground">
           Sniff out generic default avatars, straight from the pixels.
@@ -83,7 +87,8 @@ export default async function Home() {
           <a
             className={cn(
               buttonVariants({ size: "lg" }),
-              "h-10 w-[152px] rounded-md text-[13px] font-semibold"
+              pxBtn,
+              "h-11 w-[152px] text-[11px] uppercase tracking-wide"
             )}
             href="#demo"
           >
@@ -92,7 +97,8 @@ export default async function Home() {
           <a
             className={cn(
               buttonVariants({ variant: "raise", size: "lg" }),
-              "h-10 min-w-[152px] gap-1.5 rounded-md px-6 text-[13px] font-semibold"
+              pxBtn,
+              "h-11 min-w-[152px] gap-1.5 px-6 text-[11px] uppercase tracking-wide"
             )}
             href="https://github.com/tunctn/avatarsniff"
             rel="noreferrer"
@@ -101,7 +107,9 @@ export default async function Home() {
             GitHub
             {stars !== null && (
               <span className="inline-flex items-center gap-1 text-muted-foreground">
-                <span aria-hidden="true">★</span>
+                <span aria-hidden="true" className="text-[var(--px-accent)]">
+                  ★
+                </span>
                 {formatStars(stars)}
                 <span className="sr-only"> stars on GitHub</span>
               </span>
@@ -110,7 +118,7 @@ export default async function Home() {
         </div>
 
         <a
-          className="mt-3 text-sm text-muted-foreground underline decoration-[var(--color-border-strong)] underline-offset-2 transition-colors hover:decoration-muted-foreground"
+          className="mt-3 font-[family-name:var(--font-dogica)] text-[10px] uppercase tracking-wide text-muted-foreground underline decoration-[var(--px-accent)] decoration-2 underline-offset-4 transition-colors hover:text-foreground"
           href="https://github.com/tunctn/avatarsniff#readme"
           rel="noreferrer"
           target="_blank"
@@ -131,12 +139,12 @@ export default async function Home() {
         </p>
 
         <section className="flex flex-col gap-3">
-          <h2 className="text-[15px] font-semibold tracking-[-0.01em]">Install</h2>
+          <h2 className="px-h2 text-[14px] font-bold">Install</h2>
           <InstallTabs />
         </section>
 
         <section className="flex flex-col gap-3" id="demo">
-          <h2 className="text-[15px] font-semibold tracking-[-0.01em]">Try it</h2>
+          <h2 className="px-h2 text-[14px] font-bold">Try it</h2>
           <p className="text-[15px] leading-relaxed text-muted-foreground">
             These run entirely in your browser through <Code>sniff</Code>. Each
             sample is drawn on a canvas and classified on the spot. Drop your own
@@ -146,14 +154,12 @@ export default async function Home() {
         </section>
 
         <section className="flex flex-col gap-3">
-          <h2 className="text-[15px] font-semibold tracking-[-0.01em]">Browser</h2>
-          <pre className={preClass}>
-            <code>{USAGE}</code>
-          </pre>
+          <h2 className="px-h2 text-[14px] font-bold">Browser</h2>
+          <CodeBlock code={USAGE} lang="ts" title="browser.ts" />
         </section>
 
         <section className="flex flex-col gap-3">
-          <h2 className="text-[15px] font-semibold tracking-[-0.01em]">
+          <h2 className="px-h2 text-[14px] font-bold">
             Server (Node)
           </h2>
           <p className="text-[15px] leading-relaxed text-muted-foreground">
@@ -165,13 +171,11 @@ export default async function Home() {
             when you actually need it. It rejects anything over 10MB before
             decoding.
           </p>
-          <pre className={preClass}>
-            <code>{NODE_USAGE}</code>
-          </pre>
+          <CodeBlock code={NODE_USAGE} lang="ts" title="server.ts" />
         </section>
 
         <section className="flex flex-col gap-3">
-          <h2 className="text-[15px] font-semibold tracking-[-0.01em]">
+          <h2 className="px-h2 text-[14px] font-bold">
             How it decides
           </h2>
           <p className="text-[15px] leading-relaxed text-muted-foreground">
@@ -184,10 +188,11 @@ export default async function Home() {
         </section>
       </div>
 
-      <footer className="mt-24 border-t border-border py-8 text-sm text-muted-foreground">
+      <footer className="mt-24 flex items-center gap-2 border-t-2 border-[var(--px-ink)] py-8 font-[family-name:var(--font-dogica)] text-[10px] uppercase tracking-wide text-muted-foreground">
+        <span aria-hidden="true" className="size-2 bg-[var(--px-accent)]" />
         MIT ©{" "}
         <a
-          className="font-medium text-foreground hover:underline"
+          className="text-foreground underline decoration-[var(--px-accent)] decoration-2 underline-offset-4 hover:text-[var(--px-accent)]"
           href="https://github.com/tunctn"
         >
           Tunç Türkmen

@@ -18,11 +18,11 @@ export function InstallTabs() {
     MANAGERS.find((m) => m.id === active)?.command ?? MANAGERS[0].command;
 
   return (
-    <div className="overflow-hidden rounded-md border border-border bg-[linear-gradient(to_top,var(--gray-2),var(--gray-1)_8px)]">
-      <div className="flex items-center gap-1 border-b border-border px-2.5 py-1.5">
+    <div className="overflow-hidden rounded-none border-2 border-[var(--px-ink)] bg-[var(--px-surface-2)] shadow-[3px_3px_0_0_var(--px-ink)]">
+      <div className="flex items-center gap-1 border-b-2 border-[var(--px-ink)] px-2.5 py-1.5">
         <span
           aria-hidden="true"
-          className="mr-1 inline-flex size-7 items-center justify-center rounded-[5px] bg-foreground text-background"
+          className="mr-1 inline-flex size-7 items-center justify-center rounded-none bg-[var(--px-accent)] text-[var(--px-accent-ink)]"
         >
           <svg
             fill="none"
@@ -43,8 +43,8 @@ export function InstallTabs() {
             aria-selected={active === m.id}
             className={
               active === m.id
-                ? "rounded-md border border-border bg-background px-2.5 py-1 font-mono text-[13px] text-foreground"
-                : "rounded-md border border-transparent px-2.5 py-1 font-mono text-[13px] text-muted-foreground transition-colors hover:text-foreground"
+                ? "rounded-none border-2 border-[var(--px-ink)] bg-[var(--px-surface)] px-2.5 py-1 font-mono text-[13px] text-foreground"
+                : "rounded-none border-2 border-transparent px-2.5 py-1 font-mono text-[13px] text-muted-foreground transition-colors hover:text-foreground"
             }
             key={m.id}
             onClick={() => setActive(m.id)}
@@ -56,7 +56,7 @@ export function InstallTabs() {
         ))}
         <Button
           aria-label={copied ? "Copied" : "Copy install command"}
-          className="ml-auto rounded-[5px]"
+          className="ml-auto rounded-none border-2 border-[var(--px-ink)] text-foreground hover:bg-[var(--px-surface)]"
           onClick={() => {
             navigator.clipboard?.writeText(command).then(() => {
               setCopied(true);

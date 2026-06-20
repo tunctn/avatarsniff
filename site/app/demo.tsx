@@ -72,9 +72,10 @@ function Verdict({ result }: { result: DefaultAvatarDetection | null }) {
     <>
       <Badge
         className={cn(
+          "rounded-none border-2 font-[family-name:var(--font-dogica)] text-[8px] uppercase tracking-wide",
           result.isDefault
-            ? "border-[var(--color-default-border)] bg-[var(--color-default-bg)] text-[var(--color-default-text)]"
-            : "border-[var(--color-real-border)] bg-[var(--color-real-bg)] text-[var(--color-real-text)]"
+            ? "border-[var(--color-default-text)] bg-[var(--color-default-bg)] text-[var(--color-default-text)]"
+            : "border-[var(--color-real-text)] bg-[var(--color-real-bg)] text-[var(--color-real-text)]"
         )}
         variant="outline"
       >
@@ -100,14 +101,16 @@ function Sample({ label, draw }: { label: string; draw: DrawFn }) {
     sniff(ctx.getImageData(0, 0, SIZE, SIZE)).then(setResult);
   }, [draw]);
   return (
-    <Card className="flex flex-col items-center gap-2 p-4 text-center transition-shadow hover:shadow-[0_4px_12px_rgba(0,0,0,0.1)]">
+    <Card className="px-panel px-press flex flex-col items-center gap-2 rounded-none p-4 text-center">
       <canvas
-        className="size-14 rounded-full bg-[var(--color-subtle)] object-cover"
+        className="size-14 rounded-none border-2 border-[var(--px-ink)] bg-[var(--px-surface-2)] object-cover [image-rendering:pixelated]"
         height={SIZE}
         ref={ref}
         width={SIZE}
       />
-      <div className="text-xs font-semibold">{label}</div>
+      <div className="font-[family-name:var(--font-dogica)] text-[8px] uppercase leading-[1.5] tracking-wide">
+        {label}
+      </div>
       <Verdict result={result} />
     </Card>
   );
@@ -149,8 +152,8 @@ function Upload() {
   return (
     <button
       className={cn(
-        "mt-4 w-full cursor-pointer rounded-lg border border-dashed border-[var(--color-border-strong)] bg-background p-8 text-center text-sm text-muted-foreground transition-colors hover:border-muted-foreground hover:bg-[var(--color-subtle)] focus-visible:border-[var(--color-focus)] focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-[var(--color-focus)]/20",
-        over && "border-muted-foreground bg-[var(--color-subtle)]"
+        "mt-4 w-full cursor-pointer rounded-none border-2 border-dashed border-[var(--px-ink)] bg-[var(--px-surface)] p-8 text-center text-sm text-muted-foreground transition-colors hover:border-[var(--px-accent)] hover:bg-[var(--px-surface-2)] focus-visible:border-[var(--px-accent)] focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-[var(--px-accent)]/30",
+        over && "border-[var(--px-accent)] bg-[var(--px-surface-2)]"
       )}
       onClick={() => inputRef.current?.click()}
       onDragLeave={() => setOver(false)}

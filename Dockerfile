@@ -30,5 +30,8 @@ WORKDIR /app
 # under site/. The bundle itself is emitted to site/.next/standalone.
 COPY --from=build /app/site/.next/standalone ./
 COPY --from=build /app/site/.next/static ./site/.next/static
+# Standalone output does NOT include public/ — copy it so static assets
+# (/avatars/*, /hayta/*) are served instead of 404ing.
+COPY --from=build /app/site/public ./site/public
 EXPOSE 3000
 CMD ["node", "site/server.js"]
