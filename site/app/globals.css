@@ -201,3 +201,81 @@
     animation-duration: 0.01ms !important;
   }
 }
+
+/* Guard-dog hero: an avatar slides in from the left, the dog sniffs it, and it
+ * swoops out right (passed) or left (barked at). --guard-inspect is the avatar's
+ * resting spot just left of the centred dog. */
+/* Subtle 20px moves. --guard-inspect is the avatar's resting x. It slides up
+ * from below to arrive, then on the reaction leaves: up if real, left if a
+ * default — and only in the last 25% of the reaction (it holds until 75%). */
+@keyframes guard-avatar-enter {
+  from {
+    transform: translateX(var(--guard-inspect)) translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(var(--guard-inspect)) translateY(0);
+    opacity: 1;
+  }
+}
+@keyframes guard-avatar-pass {
+  0%,
+  75% {
+    transform: translateX(var(--guard-inspect)) translateY(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(var(--guard-inspect)) translateY(-20px);
+    opacity: 0;
+  }
+}
+@keyframes guard-avatar-fail {
+  0%,
+  75% {
+    transform: translateX(var(--guard-inspect)) translateY(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(calc(var(--guard-inspect) - 20px)) translateY(0);
+    opacity: 0;
+  }
+}
+@keyframes guard-pop {
+  from {
+    transform: translateX(var(--guard-inspect)) scale(0.5);
+    opacity: 0;
+  }
+  60% {
+    transform: translateX(var(--guard-inspect)) scale(1.12);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(var(--guard-inspect)) scale(1);
+    opacity: 1;
+  }
+}
+@keyframes guard-bark {
+  0%,
+  100% {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+  25%,
+  70% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+/* Bark recoil — applied to a wrapper outside the sprite's own left/right flip. */
+@keyframes guard-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  30% {
+    transform: translateX(-2px);
+  }
+  70% {
+    transform: translateX(2px);
+  }
+}

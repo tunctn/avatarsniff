@@ -1,10 +1,22 @@
 import type { Metadata } from "next";
 import { Geist_Mono, Inter } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
+  display: "swap",
+});
+
+// Dogica Pixel by AV Reference (rmocci) - free for commercial use; bundling in
+// an app requires attribution + the license notice. See ./fonts/dogica_pixel_license.txt
+const dogica = localFont({
+  src: [
+    { path: "./fonts/dogicapixel.ttf", weight: "400", style: "normal" },
+    { path: "./fonts/dogicapixelbold.ttf", weight: "700", style: "normal" },
+  ],
+  variable: "--font-dogica",
   display: "swap",
 });
 
@@ -26,7 +38,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html className={`${inter.variable} ${geistMono.variable}`} lang="en">
+    <html
+      className={`${inter.variable} ${geistMono.variable} ${dogica.variable}`}
+      lang="en"
+    >
       <body>{children}</body>
     </html>
   );

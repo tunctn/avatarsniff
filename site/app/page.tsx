@@ -1,7 +1,8 @@
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { CopyPill } from "./copy-pill";
 import { Demo } from "./demo";
+import { GuardDogHero } from "./guard-dog";
+import { InstallTabs } from "./install-tabs";
 
 const REPO = "tunctn/avatarsniff";
 
@@ -25,47 +26,6 @@ async function getStarCount(): Promise<number | null> {
 
 const formatStars = (n: number) =>
   n >= 1000 ? `${(n / 1000).toFixed(1).replace(/\.0$/, "")}k` : `${n}`;
-
-const HERO_CHIPS: { label: string; style: React.CSSProperties }[] = [
-  {
-    label: "M",
-    style: {
-      transform: "translateX(-160%) translateY(-12%) scale(0.86)",
-      background: "var(--chip-green)",
-    },
-  },
-  {
-    label: "A",
-    style: {
-      transform: "translateX(-95%) translateY(-44%) scale(0.93)",
-      background: "var(--chip-google)",
-    },
-  },
-  {
-    label: "S",
-    style: {
-      transform: "translateX(-50%) translateY(-56%) scale(1)",
-      background: "var(--chip-violet)",
-      zIndex: 2,
-    },
-  },
-  {
-    label: "●",
-    style: {
-      transform: "translateX(-5%) translateY(-44%) scale(0.93)",
-      background: "var(--color-paper)",
-      color: "var(--chip-logo)",
-      fontSize: 26,
-    },
-  },
-  {
-    label: "",
-    style: {
-      transform: "translateX(60%) translateY(-12%) scale(0.86)",
-      background: "var(--chip-teal)",
-    },
-  },
-];
 
 function Code({ children }: { children: React.ReactNode }) {
   return (
@@ -110,22 +70,9 @@ export default async function Home() {
   return (
     <main className="mx-auto max-w-[692px] px-6">
       <section className="flex flex-col items-center pt-[clamp(72px,14vh,128px)]">
-        <div
-          aria-hidden="true"
-          className="relative mx-auto h-24 w-full max-w-[400px] [mask-image:linear-gradient(0deg,transparent_0,#000_42%)]"
-        >
-          {HERO_CHIPS.map((chip, i) => (
-            <div
-              className="absolute bottom-0 left-1/2 grid size-[52px] place-items-center rounded-full border border-border text-[22px] font-semibold text-white shadow-[0_4px_12px_rgba(0,0,0,0.1)]"
-              key={i}
-              style={chip.style}
-            >
-              {chip.label}
-            </div>
-          ))}
-        </div>
+        <GuardDogHero />
 
-        <h1 className="relative z-10 -mt-2 mb-3 text-[clamp(34px,8vw,48px)] font-bold leading-none tracking-[-0.04em] [overflow-wrap:anywhere]">
+        <h1 className="relative z-10 -mt-2 mb-3 font-[family-name:var(--font-dogica)] text-[clamp(30px,7vw,42px)] font-bold leading-[1.1] tracking-normal [overflow-wrap:anywhere]">
           avatarsniff
         </h1>
         <p className="mb-4 max-w-[34ch] text-center text-[17px] text-muted-foreground">
@@ -185,7 +132,7 @@ export default async function Home() {
 
         <section className="flex flex-col gap-3">
           <h2 className="text-[15px] font-semibold tracking-[-0.01em]">Install</h2>
-          <CopyPill command="pnpm add avatarsniff" />
+          <InstallTabs />
         </section>
 
         <section className="flex flex-col gap-3" id="demo">
