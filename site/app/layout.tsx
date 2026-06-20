@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
 import { Geist_Mono, Inter } from "next/font/google";
 import localFont from "next/font/local";
+import Script from "next/script";
+import { env } from "@/lib/env";
 import "./globals.css";
+
+const umamiWebsiteId = env.NEXT_PUBLIC_UMAMI_WEBSITE_ID;
 
 const inter = Inter({
   subsets: ["latin"],
@@ -68,6 +72,13 @@ export default function RootLayout({
       lang="en"
     >
       <body>{children}</body>
+      {umamiWebsiteId ? (
+        <Script
+          defer
+          src="https://analytics.wust.co/script.js"
+          data-website-id={umamiWebsiteId}
+        />
+      ) : null}
     </html>
   );
 }
