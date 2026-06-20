@@ -69,6 +69,22 @@ const fromUrl = await sniff(user.photoUrl); // string URL, fetched for you
 // null if the URL is missing or the fetch fails
 ```
 
+### In a server component / API route (the common case)
+
+The usual question is "the provider gave me a `photoUrl` - should I show it, or
+swap in my own avatar?" That's one call:
+
+```tsx
+// e.g. a Next.js server component
+import { sniff } from "avatarsniff";
+
+export async function Avatar({ user }: { user: { name: string; photoUrl: string } }) {
+  const result = await sniff(user.photoUrl);
+  // null (missing/failed fetch) or a real photo -> keep theirs; otherwise generate
+  return result?.isDefault ? <GeneratedAvatar name={user.name} /> : <img src={user.photoUrl} alt="" />;
+}
+```
+
 ### Browser (canvas `ImageData`)
 
 ```ts
@@ -95,6 +111,25 @@ Every family runs by default. Disable any of `initials`, `solidColor`,
 ```ts
 await sniff(bytes, { detect: { identicon: false, personIcon: false } });
 ```
+
+### Tune the thresholds
+
+Every threshold is an overridable field on the second argument (`DetectOptions`);
+the defaults are conservative. A few you might reach for:
+
+```ts
+await sniff(bytes, {
+  scoreThreshold: 0.6, // verdict cutoff in [0,1]; raise to be stricter
+  minSymmetry: 0.9, // mirror-symmetry a generated pattern must reach (the main photo gate)
+  maxColoredContent: 0.06, // max "real content" a default may have; raise to tolerate busier defaults
+  sampleSize: 48, // edge length the image is downsampled to before sampling
+  maxBytes: 10_000_000, // reject larger inputs before decoding (default 10MB)
+});
+```
+
+See the `DetectOptions` type for the full list (background/glyph cutoffs,
+per-family symmetry and foreground thresholds, colour quantisation, etc.) - all
+are typed and documented inline.
 
 ### Raw pixels, synchronously (lowest level, anywhere)
 
@@ -171,6 +206,24 @@ they keep working as providers add new ones.
 Real photos are mainly ruled out by the symmetry test and by having lots of
 coloured content. Every threshold is configurable via the optional
 `DetectOptions` argument, and any family can be turned off with `detect`.
+
+## Limitations
+
+avatarsniff favours **recall over precision** - it would rather flag a default it
+should keep than miss one. The structural detectors don't know what an image
+*means*, only what it looks like, so a few real images can read as defaults:
+
+- **Bilaterally symmetric logos** (a centred wordmark, a mirror-symmetric icon)
+  can match `identicon`, which keys on mirror symmetry. This is the main known
+  false positive. If your images are brand logos rather than user photos, disable
+  it: `sniff(bytes, { detect: { identicon: false } })`.
+- **Flat single-colour brand images** can match `solidColor`.
+- **Undecodable input** (an unsupported format, a corrupt or truncated file)
+  returns `null`, which you should treat as "not a default, keep it" - the safe
+  outcome for a real photo we couldn't read.
+
+If false positives matter for your data, raise `scoreThreshold` / `minSymmetry`
+or turn off the families you don't expect (see [Tune the thresholds](#tune-the-thresholds)).
 
 ## License
 

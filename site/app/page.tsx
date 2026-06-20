@@ -1,4 +1,3 @@
-import { buttonVariants } from "@/components/ui/button";
 import { CodeBlock } from "@/components/ui/code-block";
 import { cn } from "@/lib/utils";
 import { Demo } from "./demo";
@@ -37,9 +36,13 @@ function Code({ children }: { children: React.ReactNode }) {
 }
 
 // Shared pixel button: square, 2px ink border, hard offset shadow that you
-// walk into on hover/press. Dogica face for the arcade-label feel.
+// walk into on hover/press. Dogica face for the arcade-label feel. Self-contained
+// (layout + focus + interaction) so it doesn't stack with shadcn's buttonVariants
+// base — that base injected a competing `transition-all` and a higher-specificity
+// `active:translate-y-px`, which fought this press animation and made the shadow
+// and position jump on hover/press.
 const pxBtn =
-  "rounded-none border-2 border-[var(--px-ink)] font-[family-name:var(--font-dogica)] shadow-[3px_3px_0_0_var(--px-ink)] transition-[transform,box-shadow] duration-75 hover:translate-x-px hover:translate-y-px hover:shadow-[2px_2px_0_0_var(--px-ink)] active:translate-x-[3px] active:translate-y-[3px] active:shadow-none";
+  "inline-flex shrink-0 select-none items-center justify-center rounded-none border-2 border-[var(--px-ink)] font-[family-name:var(--font-dogica)] shadow-[3px_3px_0_0_var(--px-ink)] outline-none transition-[transform,box-shadow] duration-75 hover:translate-x-px hover:translate-y-px hover:shadow-[2px_2px_0_0_var(--px-ink)] active:translate-x-[3px] active:translate-y-[3px] active:shadow-none focus-visible:border-[var(--px-accent)] focus-visible:ring-[3px] focus-visible:ring-[var(--px-accent)]/30";
 
 const USAGE = `import { sniff } from "avatarsniff";
 
@@ -86,9 +89,8 @@ export default async function Home() {
         <div className="flex flex-wrap justify-center gap-2">
           <a
             className={cn(
-              buttonVariants({ size: "lg" }),
               pxBtn,
-              "h-11 w-[152px] text-[11px] uppercase tracking-wide"
+              "h-11 w-[152px] bg-[var(--px-accent)] text-[11px] uppercase tracking-wide text-[var(--px-accent-ink)]"
             )}
             href="#demo"
           >
@@ -96,9 +98,8 @@ export default async function Home() {
           </a>
           <a
             className={cn(
-              buttonVariants({ variant: "raise", size: "lg" }),
               pxBtn,
-              "h-11 min-w-[152px] gap-1.5 px-6 text-[11px] uppercase tracking-wide"
+              "h-11 min-w-[152px] gap-1.5 bg-[var(--px-surface)] px-6 text-[11px] uppercase tracking-wide text-foreground"
             )}
             href="https://github.com/tunctn/avatarsniff"
             rel="noreferrer"
@@ -119,7 +120,7 @@ export default async function Home() {
 
         <a
           className="mt-3 font-[family-name:var(--font-dogica)] text-[10px] uppercase tracking-wide text-muted-foreground underline decoration-[var(--px-accent)] decoration-2 underline-offset-4 transition-colors hover:text-foreground"
-          href="https://github.com/tunctn/avatarsniff#readme"
+          href="https://github.com/tunctn/avatarsniff/blob/main/lib/README.md"
           rel="noreferrer"
           target="_blank"
         >
