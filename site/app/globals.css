@@ -129,7 +129,9 @@
   --secondary: var(--px-surface-2);
   --secondary-foreground: var(--px-ink);
   --muted: var(--px-surface-2);
-  --muted-foreground: var(--color-muted);
+  /* warm-derived muted text so body copy matches the warm paper/ink instead of
+   * the cold neutral gray scale (was var(--color-muted) = hsl(0 0% 43.5%)). */
+  --muted-foreground: color-mix(in oklab, var(--px-ink) 60%, var(--px-paper));
   --accent: var(--px-surface-2);
   --accent-foreground: var(--px-ink);
   --destructive: var(--color-default-text);
