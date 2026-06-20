@@ -6,6 +6,12 @@
 
 # avatarsniff
 
+[![npm version](https://img.shields.io/npm/v/avatarsniff.svg)](https://www.npmjs.com/package/avatarsniff)
+[![bundle size](https://img.shields.io/bundlephobia/minzip/avatarsniff.svg)](https://bundlephobia.com/package/avatarsniff)
+[![zero dependencies](https://img.shields.io/badge/dependencies-0-brightgreen.svg)](https://www.npmjs.com/package/avatarsniff?activeTab=dependencies)
+[![types included](https://img.shields.io/npm/types/avatarsniff.svg)](https://www.npmjs.com/package/avatarsniff)
+[![license](https://img.shields.io/npm/l/avatarsniff.svg)](./LICENSE)
+
 Detect the generic, auto-generated avatars providers hand out when someone never
 set a profile picture: Google's letter-on-a-colour, flat solid-colour blocks, the
 Gravatar mystery-person silhouette, GitHub and Gravatar identicons. It reads the
