@@ -1,68 +1,56 @@
 "use client";
 
 import { type DefaultAvatarDetection, sniff } from "avatarsniff";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
 const SIZE = 64;
-type DrawFn = (ctx: CanvasRenderingContext2D) => void;
 
-function drawDefault(bg: string, letter: string): DrawFn {
-  return (ctx) => {
-    ctx.fillStyle = bg;
-    ctx.fillRect(0, 0, SIZE, SIZE);
-    ctx.fillStyle = "#fff";
-    ctx.font = "600 34px ui-sans-serif, system-ui, sans-serif";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText(letter, SIZE / 2, SIZE / 2 + 2);
-  };
-}
-
-function drawPhoto(): DrawFn {
-  return (ctx) => {
-    const g = ctx.createLinearGradient(0, 0, SIZE, SIZE);
-    g.addColorStop(0, "#ffb347");
-    g.addColorStop(1, "#ff5e62");
-    ctx.fillStyle = g;
-    ctx.fillRect(0, 0, SIZE, SIZE);
-    ctx.fillStyle = "rgba(255,255,255,0.92)";
-    ctx.beginPath();
-    ctx.arc(SIZE / 2, 26, 12, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.beginPath();
-    ctx.ellipse(SIZE / 2, 62, 20, 15, 0, 0, Math.PI * 2);
-    ctx.fill();
-  };
-}
-
-function drawLogoOnWhite(): DrawFn {
-  return (ctx) => {
-    ctx.fillStyle = "#fff";
-    ctx.fillRect(0, 0, SIZE, SIZE);
-    ctx.fillStyle = "#e8552d";
-    ctx.beginPath();
-    ctx.arc(SIZE / 2, SIZE / 2, 15, 0, Math.PI * 2);
-    ctx.fill();
-  };
-}
-
-function drawSolid(color: string): DrawFn {
-  return (ctx) => {
-    ctx.fillStyle = color;
-    ctx.fillRect(0, 0, SIZE, SIZE);
-  };
-}
-
-const SAMPLES: { label: string; draw: DrawFn }[] = [
-  { label: "Google default", draw: drawDefault("#4285f4", "A") },
-  { label: "Default (green)", draw: drawDefault("#1f9d55", "M") },
-  { label: "Real photo", draw: drawPhoto() },
-  { label: "Logo on white", draw: drawLogoOnWhite() },
-  { label: "Solid colour", draw: drawSolid("#16a3a3") },
-];
+// 40 real fixtures (5×8) copied from lib/test/fixtures into public/fixtures.
+// Clicking one feeds it through the exact same path as a user upload.
+const SAMPLES: string[] = [
+  "identicon-github-1.png",
+  "initials-ui-ab.png",
+  "real-picsum-3.jpg",
+  "solid-fb8c00.png",
+  "identicon-dicebear-4.png",
+  "initials-dicebear-2.png",
+  "person-mp.jpg",
+  "real-picsum-13.jpg",
+  "identicon-gravatar-2.png",
+  "solid-1e88e5.png",
+  "initials-ui-qw.png",
+  "real-picsum-1.jpg",
+  "identicon-dicebear-1.png",
+  "initials-ui-ln.png",
+  "solid-d81b60.png",
+  "real-picsum-9.jpg",
+  "identicon-github-3.png",
+  "initials-dicebear-4.png",
+  "real-picsum-5.jpg",
+  "solid-43a047.png",
+  "identicon-dicebear-5.png",
+  "initials-ui-jd.png",
+  "real-picsum-15.jpg",
+  "identicon-gravatar-1.png",
+  "solid-8e24aa.png",
+  "initials-dicebear-1.png",
+  "real-picsum-2.jpg",
+  "identicon-dicebear-2.png",
+  "initials-ui-mk.png",
+  "solid-e53935.png",
+  "real-picsum-11.jpg",
+  "identicon-github-2.png",
+  "initials-dicebear-3.png",
+  "real-picsum-4.jpg",
+  "identicon-dicebear-6.png",
+  "solid-00897b.png",
+  "initials-ui-ts.png",
+  "real-picsum-7.jpg",
+  "identicon-gravatar-3.png",
+  "identicon-dicebear-3.png",
+].map((f) => `/fixtures/${f}`);
 
 function Verdict({ result }: { result: DefaultAvatarDetection | null }) {
   if (!result) {
@@ -88,51 +76,14 @@ function Verdict({ result }: { result: DefaultAvatarDetection | null }) {
   );
 }
 
-function Sample({ label, draw }: { label: string; draw: DrawFn }) {
-  const ref = useRef<HTMLCanvasElement>(null);
-  const [result, setResult] = useState<DefaultAvatarDetection | null>(null);
-  useEffect(() => {
-    const canvas = ref.current;
-    const ctx = canvas?.getContext("2d", { willReadFrequently: true });
-    if (!ctx) {
-      return;
-    }
-    draw(ctx);
-    sniff(ctx.getImageData(0, 0, SIZE, SIZE)).then(setResult);
-  }, [draw]);
-  return (
-    <Card className="px-panel px-press flex flex-col items-center gap-2 rounded-none p-4 text-center">
-      <canvas
-        className="size-14 rounded-none border-2 border-[var(--px-ink)] bg-[var(--px-surface-2)] object-cover [image-rendering:pixelated]"
-        height={SIZE}
-        ref={ref}
-        width={SIZE}
-      />
-      <div className="font-[family-name:var(--font-dogica)] text-[8px] uppercase leading-[1.5] tracking-wide">
-        {label}
-      </div>
-      <Verdict result={result} />
-    </Card>
-  );
-}
-
-function Upload() {
-  const inputRef = useRef<HTMLInputElement>(null);
-  const [over, setOver] = useState(false);
-  const [url, setUrl] = useState<string | null>(null);
-  const [result, setResult] = useState<DefaultAvatarDetection | null>(null);
-
-  const handleFile = useCallback((file: File | undefined) => {
-    if (!file) {
-      return;
-    }
-    const objectUrl = URL.createObjectURL(file);
+// Classify an image at a URL the exact way an upload is classified: draw it 1:1
+// at its natural size (no destination scaling, so no smoothing blur — sniff
+// downsamples internally) and sniff the resulting pixels. Works for both object
+// URLs (uploads) and same-origin fixture paths.
+function classify(src: string): Promise<DefaultAvatarDetection | null> {
+  return new Promise((resolve) => {
     const img = new Image();
     img.onload = () => {
-      // Draw at the image's natural size, 1:1 — no destination scaling, so no
-      // smoothing blur. Downscaling here (e.g. to 64px) would average fine
-      // detail into greys and make busy identicons read as a near-white photo;
-      // sniff downsamples internally instead. Matches passing image bytes.
       const w = img.naturalWidth || SIZE;
       const h = img.naturalHeight || SIZE;
       const canvas = document.createElement("canvas");
@@ -140,67 +91,111 @@ function Upload() {
       canvas.height = h;
       const ctx = canvas.getContext("2d", { willReadFrequently: true });
       if (!ctx) {
+        resolve(null);
         return;
       }
       ctx.drawImage(img, 0, 0);
-      sniff(ctx.getImageData(0, 0, w, h)).then(setResult);
-      setUrl(objectUrl);
+      sniff(ctx.getImageData(0, 0, w, h)).then(resolve);
     };
-    img.src = objectUrl;
-  }, []);
-
-  return (
-    <button
-      className={cn(
-        "mt-4 w-full cursor-pointer rounded-none border-2 border-dashed border-[var(--px-ink)] bg-[var(--px-surface)] p-8 text-center text-sm text-muted-foreground transition-colors hover:border-[var(--px-accent)] hover:bg-[var(--px-surface-2)] focus-visible:border-[var(--px-accent)] focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-[var(--px-accent)]/30",
-        over && "border-[var(--px-accent)] bg-[var(--px-surface-2)]"
-      )}
-      onClick={() => inputRef.current?.click()}
-      onDragLeave={() => setOver(false)}
-      onDragOver={(e) => {
-        e.preventDefault();
-        setOver(true);
-      }}
-      onDrop={(e) => {
-        e.preventDefault();
-        setOver(false);
-        handleFile(e.dataTransfer.files[0]);
-      }}
-      type="button"
-    >
-      <input
-        accept="image/*"
-        className="hidden"
-        onChange={(e) => handleFile(e.target.files?.[0])}
-        ref={inputRef}
-        type="file"
-      />
-      {url ? (
-        <div className="flex flex-col items-center gap-2.5">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            alt="uploaded avatar"
-            className="size-14 rounded-full object-cover"
-            src={url}
-          />
-          <Verdict result={result} />
-        </div>
-      ) : (
-        "Drop an avatar here, or click to upload. Everything runs in your browser."
-      )}
-    </button>
-  );
+    img.onerror = () => resolve(null);
+    img.src = src;
+  });
 }
 
 export function Demo() {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [over, setOver] = useState(false);
+  const [url, setUrl] = useState<string | null>(null);
+  const [result, setResult] = useState<DefaultAvatarDetection | null>(null);
+
+  const select = useCallback((src: string) => {
+    setUrl(src);
+    setResult(null);
+    classify(src).then(setResult);
+  }, []);
+
+  const handleFile = useCallback(
+    (file: File | undefined) => {
+      if (!file) {
+        return;
+      }
+      select(URL.createObjectURL(file));
+    },
+    [select]
+  );
+
   return (
     <div>
-      <div className="grid grid-cols-[repeat(auto-fill,minmax(0,1fr))] gap-3 min-[480px]:grid-cols-[repeat(auto-fill,minmax(140px,1fr))]">
-        {SAMPLES.map((sample) => (
-          <Sample draw={sample.draw} key={sample.label} label={sample.label} />
+      <button
+        className={cn(
+          "flex h-[220px] w-full cursor-pointer flex-col items-center justify-center rounded-none border-2 border-dashed border-[var(--px-ink)] bg-[var(--px-surface)] p-8 text-center text-sm text-muted-foreground transition-colors hover:border-[var(--px-accent)] hover:bg-[var(--px-surface-2)] focus-visible:border-[var(--px-accent)] focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-[var(--px-accent)]/30",
+          over && "border-[var(--px-accent)] bg-[var(--px-surface-2)]"
+        )}
+        onClick={() => inputRef.current?.click()}
+        onDragLeave={() => setOver(false)}
+        onDragOver={(e) => {
+          e.preventDefault();
+          setOver(true);
+        }}
+        onDrop={(e) => {
+          e.preventDefault();
+          setOver(false);
+          handleFile(e.dataTransfer.files[0]);
+        }}
+        type="button"
+      >
+        <input
+          accept="image/*"
+          className="hidden"
+          onChange={(e) => handleFile(e.target.files?.[0])}
+          ref={inputRef}
+          type="file"
+        />
+        {url ? (
+          <div className="flex flex-col items-center gap-2.5">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              alt="avatar"
+              className="size-14 shrink-0 object-contain"
+              height={56}
+              src={url}
+              width={56}
+            />
+            <div className="flex h-[60px] flex-col items-center gap-1.5">
+              <Verdict result={result} />
+            </div>
+          </div>
+        ) : (
+          "Drop an avatar here, or click to upload. Everything runs in your browser."
+        )}
+      </button>
+
+      <p className="mt-4 text-[13px] leading-relaxed text-muted-foreground">
+        …or click a sample below to classify it as if you'd uploaded it.
+      </p>
+      <div className="mt-3 grid grid-cols-8 gap-2">
+        {SAMPLES.map((src) => (
+          <button
+            aria-label="classify sample avatar"
+            className={cn(
+              "cursor-pointer rounded-none border-2 bg-[var(--px-surface-2)] p-0 transition-colors hover:border-[var(--px-accent)] focus-visible:border-[var(--px-accent)] focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-[var(--px-accent)]/30",
+              url === src
+                ? "border-[var(--px-accent)]"
+                : "border-[var(--px-ink)]"
+            )}
+            key={src}
+            onClick={() => select(src)}
+            type="button"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              alt="sample avatar"
+              className="aspect-square w-full object-cover [image-rendering:pixelated]"
+              src={src}
+            />
+          </button>
         ))}
       </div>
-      <Upload />
     </div>
   );
 }

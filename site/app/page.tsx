@@ -146,9 +146,9 @@ export default async function Home() {
         <section className="flex flex-col gap-3" id="demo">
           <h2 className="px-h2 text-[14px] font-bold">Try it</h2>
           <p className="text-[15px] leading-relaxed text-muted-foreground">
-            These run entirely in your browser through <Code>sniff</Code>. Each
-            sample is drawn on a canvas and classified on the spot. Drop your own
-            in below.
+            This runs entirely in your browser through <Code>sniff</Code>. Drop
+            your own avatar in, or click any of the real samples below to
+            classify it on the spot.
           </p>
           <Demo />
         </section>
