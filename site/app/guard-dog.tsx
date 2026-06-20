@@ -1,7 +1,7 @@
 "use client";
 
 import { sniff } from "avatarsniff";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 // ── Hayta, the guard dog ─────────────────────────────────────────────────────
 // Each animation is a horizontal strip of 20×20 px frames in /public/hayta.
@@ -73,17 +73,19 @@ function SpriteDog({
   );
 }
 
-// ── The 10 sniffable avatars (copied from the test fixtures) ─────────────────
+// ── The 10 sniffable avatars (copied from the test fixtures): 5 real photos +
+// 5 defaults (one per family — initials, solid, two identicons, person icon).
+// The component classifies each with `sniff` and interleaves them real/default.
 const AVATARS = [
   "real-1.jpg",
-  "initials-jd.png",
-  "identicon-github.png",
   "real-2.jpg",
-  "solid-blue.png",
-  "person-mp.jpg",
-  "initials-dicebear.png",
-  "identicon-gravatar.png",
+  "real-3.jpg",
+  "real-4.jpg",
+  "real-5.jpg",
+  "initials-jd.png",
   "solid-pink.png",
+  "identicon-github.png",
+  "person-mp.jpg",
   "identicon-dicebear.png",
 ].map((f) => `/avatars/${f}`);
 
@@ -233,7 +235,26 @@ export function GuardDogHero() {
     return () => clearTimeout(t);
   }, [prepared]);
 
-  const isDefault = prepared?.[i]?.isDefault ?? false;
+  // Walk a real → default → real → default … sequence rather than the raw
+  // fixture order (which is mostly defaults). Reals and defaults are split by
+  // the dog's own `sniff` verdict, then each pool cycles independently so every
+  // default still gets shown, always paired with a real. Falls back to the
+  // prepared order if either pool is empty.
+  const sequence = useMemo(() => {
+    if (!prepared) return null;
+    const reals = prepared.filter((p) => !p.isDefault);
+    const defaults = prepared.filter((p) => p.isDefault);
+    if (!reals.length || !defaults.length) return prepared;
+    const n = Math.max(reals.length, defaults.length);
+    const out: Prepared[] = [];
+    for (let k = 0; k < n; k++) {
+      out.push(reals[k % reals.length], defaults[k % defaults.length]);
+    }
+    return out;
+  }, [prepared]);
+  const seqLen = sequence?.length ?? AVATARS.length;
+
+  const isDefault = sequence?.[i]?.isDefault ?? false;
   const cur = stepAt(step, isDefault);
 
   // Drive everything off one frame ticker. A beat ends only after it has played
@@ -246,12 +267,12 @@ export function GuardDogHero() {
         const nt = s.tick + 1;
         if (nt < total) return { ...s, tick: nt };
         return s.step === STEP_COUNT - 1
-          ? { i: (s.i + 1) % AVATARS.length, step: 0, tick: 0 }
+          ? { i: (s.i + 1) % seqLen, step: 0, tick: 0 }
           : { i: s.i, step: s.step + 1, tick: 0 };
       });
     }, 1000 / cur.fps);
     return () => clearInterval(id);
-  }, [i, step, ready, cur.frames, cur.cycles, cur.fps]);
+  }, [i, step, ready, cur.frames, cur.cycles, cur.fps, seqLen]);
 
   // Facing: flip at the beat's midpoint when it differs from the previous step.
   const curFace = FACE[step];
@@ -273,7 +294,7 @@ export function GuardDogHero() {
         ? `guard-avatar-enter 520ms ${ease} forwards`
         : undefined;
   const avatarHidden = step >= 7;
-  const avatarUrl = prepared?.[i]?.url;
+  const avatarUrl = sequence?.[i]?.url;
 
   return (
     <div

@@ -1,4 +1,5 @@
 import { CodeBlock } from "@/components/ui/code-block";
+import { env } from "@/lib/env";
 import { cn } from "@/lib/utils";
 import { Demo } from "./demo";
 import { GuardDogHero } from "./guard-dog";
@@ -11,7 +12,13 @@ const REPO = "tunctn/avatarsniff";
 async function getStarCount(): Promise<number | null> {
   try {
     const res = await fetch(`https://api.github.com/repos/${REPO}`, {
-      headers: { Accept: "application/vnd.github+json" },
+      headers: {
+        Accept: "application/vnd.github+json",
+        // Authenticated requests get 5,000 req/hour vs 60 unauthenticated.
+        ...(env.GITHUB_TOKEN && {
+          Authorization: `Bearer ${env.GITHUB_TOKEN}`,
+        }),
+      },
       next: { revalidate: 3600 },
     });
     if (!res.ok) return null;

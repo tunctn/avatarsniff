@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="https://raw.githubusercontent.com/tunctn/avatarsniff/main/assets/header.png" alt="avatarsniff — Sniff out generic default avatars, straight from the pixels." width="100%" />
+</p>
+
 # avatarsniff
 
 [![npm version](https://img.shields.io/npm/v/avatarsniff.svg)](https://www.npmjs.com/package/avatarsniff)

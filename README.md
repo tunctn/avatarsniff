@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="./assets/header.png" alt="avatarsniff — Sniff out generic default avatars, straight from the pixels." width="100%" />
+</p>
+
 # avatarsniff
 
 Detect the generic, auto-generated avatars providers hand out when someone never
