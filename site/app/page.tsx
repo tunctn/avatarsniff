@@ -86,8 +86,10 @@ export default async function Home() {
         <GuardDogHero />
 
         <h1 className="relative z-10 -mt-2 mb-3 inline-flex items-end font-[family-name:var(--font-dogica)] text-[clamp(30px,7vw,42px)] font-bold leading-[1.1] tracking-normal [overflow-wrap:anywhere]">
-          avatarsniff
-          <span aria-hidden="true" className="px-caret" />
+          <a className="inline-flex items-end" href="https://avatarsniff.tunc.co">
+            avatarsniff
+            <span aria-hidden="true" className="px-caret" />
+          </a>
         </h1>
         <p className="mb-4 max-w-[34ch] text-center text-[17px] text-muted-foreground">
           Sniff out generic default avatars, straight from the pixels.

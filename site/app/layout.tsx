@@ -26,10 +26,35 @@ const geistMono = Geist_Mono({
   display: "swap",
 });
 
+const title = "avatarsniff - sniff out default avatars";
+const description =
+  "Detect generic/default provider avatars (Google's initial-on-colour, Gravatar mystery-person, solid placeholders) straight from image pixels. Framework-agnostic, zero-dependency core.";
+
 export const metadata: Metadata = {
-  title: "avatarsniff - sniff out default avatars",
-  description:
-    "Detect generic/default provider avatars (Google's initial-on-colour, Gravatar mystery-person, solid placeholders) straight from image pixels. Framework-agnostic, zero-dependency core.",
+  metadataBase: new URL("https://avatarsniff.tunc.co"),
+  title,
+  description,
+  openGraph: {
+    title,
+    description,
+    url: "/",
+    siteName: "avatarsniff",
+    type: "website",
+    images: [
+      {
+        url: "/og.png",
+        width: 2080,
+        height: 802,
+        alt: "avatarsniff — Sniff out generic default avatars, straight from the pixels.",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title,
+    description,
+    images: ["/og.png"],
+  },
 };
 
 export default function RootLayout({

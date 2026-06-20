@@ -1,5 +1,7 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/tunctn/avatarsniff/main/assets/header.png" alt="avatarsniff — Sniff out generic default avatars, straight from the pixels." width="100%" />
+  <a href="https://avatarsniff.tunc.co">
+    <img src="https://raw.githubusercontent.com/tunctn/avatarsniff/main/assets/header.png" alt="avatarsniff — Sniff out generic default avatars, straight from the pixels." width="100%" />
+  </a>
 </p>
 
 # avatarsniff
