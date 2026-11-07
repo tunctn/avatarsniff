@@ -22,6 +22,8 @@ RUN pnpm --filter avatarsniff-site build
 
 # --- runtime: minimal standalone server ---
 FROM node:22-slim AS runner
+# wget for the Coolify health check (GET /api/health); slim images ship neither curl nor wget.
+RUN apt-get update && apt-get install -y --no-install-recommends wget && rm -rf /var/lib/apt/lists/*
 ENV NODE_ENV=production
 ENV PORT=3000
 ENV HOSTNAME=0.0.0.0
