@@ -7,6 +7,9 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const nextConfig = {
   // avatarsniff is a workspace package; make sure Next transpiles its ESM.
   transpilePackages: ["avatarsniff"],
+  // evlog loads optional adapters with dynamic imports; keep it out of the
+  // bundle and load it from node_modules at runtime.
+  serverExternalPackages: ["evlog"],
   // Lean, self-contained server bundle for the Docker image. Trace from the
   // monorepo root so the workspace `avatarsniff` package is included correctly.
   output: "standalone",

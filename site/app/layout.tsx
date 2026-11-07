@@ -3,6 +3,7 @@ import { Geist_Mono, Inter } from "next/font/google";
 import localFont from "next/font/local";
 import Script from "next/script";
 import { env } from "@/lib/env";
+import { ClientErrorReporter } from "./client-error-reporter";
 import "./globals.css";
 
 const umamiWebsiteId = env.NEXT_PUBLIC_UMAMI_WEBSITE_ID;
@@ -71,7 +72,10 @@ export default function RootLayout({
       className={`${inter.variable} ${geistMono.variable} ${dogica.variable}`}
       lang="en"
     >
-      <body>{children}</body>
+      <body>
+        <ClientErrorReporter />
+        {children}
+      </body>
       {umamiWebsiteId ? (
         <Script
           defer
