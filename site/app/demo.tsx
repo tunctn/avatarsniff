@@ -52,7 +52,28 @@ const SAMPLES: string[] = [
   "identicon-dicebear-3.png",
 ].map((f) => `/fixtures/${f}`);
 
-function Verdict({ result }: { result: DefaultAvatarDetection | null }) {
+function Verdict({
+  result,
+  error,
+}: {
+  result: DefaultAvatarDetection | null;
+  error: string | null;
+}) {
+  if (error) {
+    return (
+      <>
+        <Badge
+          className="rounded-none border-2 border-[var(--px-accent)] bg-[var(--px-surface)] font-[family-name:var(--font-dogica)] text-[8px] uppercase tracking-wide text-[var(--px-accent)]"
+          variant="outline"
+        >
+          error
+        </Badge>
+        <div className="min-h-8 text-[11.5px] leading-[1.4] text-muted-foreground">
+          {error}
+        </div>
+      </>
+    );
+  }
   if (!result) {
     return null;
   }
@@ -102,16 +123,76 @@ function classify(src: string): Promise<DefaultAvatarDetection | null> {
   });
 }
 
+// Classify a remote image by URL on the server (POST /api/sniff), which fetches
+// it itself so the remote host's CORS policy doesn't matter.
+async function classifyRemote(
+  url: string
+): Promise<{ result: DefaultAvatarDetection } | { error: string }> {
+  try {
+    const response = await fetch("/api/sniff", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ url }),
+    });
+    const body = await response.json().catch(() => null);
+    if (!response.ok) {
+      return { error: body?.error ?? `Request failed (HTTP ${response.status}).` };
+    }
+    return { result: body as DefaultAvatarDetection };
+  } catch {
+    return { error: "Couldn't reach the server." };
+  }
+}
+
 export function Demo() {
   const inputRef = useRef<HTMLInputElement>(null);
+  // Latest selection wins: a slow earlier classification can't overwrite it.
+  const requestRef = useRef(0);
   const [over, setOver] = useState(false);
   const [url, setUrl] = useState<string | null>(null);
   const [result, setResult] = useState<DefaultAvatarDetection | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [remoteUrl, setRemoteUrl] = useState("");
+  const [checking, setChecking] = useState(false);
 
   const select = useCallback((src: string) => {
+    const id = ++requestRef.current;
     setUrl(src);
     setResult(null);
-    classify(src).then(setResult);
+    setError(null);
+    setChecking(false);
+    classify(src).then((r) => {
+      if (requestRef.current !== id) {
+        return;
+      }
+      if (r) {
+        setResult(r);
+      } else {
+        setError("Couldn't decode that image.");
+      }
+    });
+  }, []);
+
+  const checkRemote = useCallback(async (value: string) => {
+    const trimmed = value.trim();
+    if (!trimmed) {
+      return;
+    }
+    const id = ++requestRef.current;
+    setUrl(trimmed);
+    setResult(null);
+    setError(null);
+    setChecking(true);
+    const outcome = await classifyRemote(trimmed);
+    if (requestRef.current !== id) {
+      return;
+    }
+    setChecking(false);
+    if ("result" in outcome) {
+      setResult(outcome.result);
+    } else {
+      setError(outcome.error);
+    }
   }, []);
 
   const handleFile = useCallback(
@@ -156,19 +237,61 @@ export function Demo() {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               alt="avatar"
-              className="size-14 shrink-0 object-contain"
+              className={cn(
+                "size-14 shrink-0 object-contain",
+                error && "invisible"
+              )}
               height={56}
               src={url}
               width={56}
             />
             <div className="flex h-[60px] flex-col items-center gap-1.5">
-              <Verdict result={result} />
+              {checking ? (
+                <div className="text-[11.5px] text-muted-foreground">
+                  checking…
+                </div>
+              ) : (
+                <Verdict error={error} result={result} />
+              )}
             </div>
           </div>
         ) : (
           "Drop an avatar here, or click to upload. Everything runs in your browser."
         )}
       </button>
+
+      <form
+        className="mt-4 flex gap-2"
+        onSubmit={(e) => {
+          e.preventDefault();
+          checkRemote(remoteUrl);
+        }}
+      >
+        <label className="sr-only" htmlFor="avatar-url">
+          Image URL
+        </label>
+        <input
+          className="min-w-0 flex-1 rounded-none border-2 border-[var(--px-ink)] bg-[var(--px-surface)] px-3 py-2 text-[13px] placeholder:text-muted-foreground focus-visible:border-[var(--px-accent)] focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-[var(--px-accent)]/30"
+          id="avatar-url"
+          inputMode="url"
+          onChange={(e) => setRemoteUrl(e.target.value)}
+          placeholder="Paste an image URL"
+          spellCheck={false}
+          type="text"
+          value={remoteUrl}
+        />
+        <button
+          className="cursor-pointer rounded-none border-2 border-[var(--px-ink)] bg-[var(--px-surface)] px-4 font-[family-name:var(--font-dogica)] text-[9px] uppercase tracking-wide shadow-[var(--px-shadow-sm)] transition-colors hover:border-[var(--px-accent)] focus-visible:border-[var(--px-accent)] focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-[var(--px-accent)]/30 disabled:cursor-not-allowed disabled:opacity-50"
+          disabled={checking || !remoteUrl.trim()}
+          type="submit"
+        >
+          Check
+        </button>
+      </form>
+      <p className="mt-2 text-[12px] leading-relaxed text-muted-foreground">
+        A pasted URL is downloaded and checked on our server, so it works even
+        when the image host blocks cross-origin requests.
+      </p>
 
       <p className="mt-4 text-[13px] leading-relaxed text-muted-foreground">
         …or click a sample below to classify it as if you'd uploaded it.
